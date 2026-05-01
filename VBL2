@@ -1,4 +1,4 @@
--- [[ LUQUINHAS LOUÇÃO | RAINBOW CLOVER & AUTHOR EDITION ]]
+-- [[ LUCKY HUB | RAINBOW CLOVER & AUTHOR EDITION ]]
 local player = game:GetService("Players").LocalPlayer
 local pgui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
@@ -6,10 +6,10 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
 -- Limpa versões antigas para não sobrepor
-if pgui:FindFirstChild("LuquinhasLoucao") then pgui.LuquinhasLoucao:Destroy() end
+if pgui:FindFirstChild("LuckyHub") then pgui.LuckyHub:Destroy() end
 
 local LuckyUI = Instance.new("ScreenGui", pgui)
-LuckyUI.Name = "LuquinhasLoucao"
+LuckyUI.Name = "LuckyHub"
 LuckyUI.ResetOnSpawn = false 
 
 -- Tabela para o ciclo RGB
@@ -70,7 +70,7 @@ MakeDraggable(Main)
 
 local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1, 0, 0, 45)
-Title.Text = "Luquinhas Loução"
+Title.Text = "Lucky Hub"
 Title.Font = Enum.Font.GothamBold; Title.TextSize = 20; Title.BackgroundTransparency = 1
 table.insert(RainbowElements, Title)
 

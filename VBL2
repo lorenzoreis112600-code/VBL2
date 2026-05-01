@@ -1,23 +1,21 @@
--- [[ LUCKY HUB | RAINBOW CLOVER & AUTHOR EDITION ]]
+-- [[ NÉBULA HUB | RAINBOW CLOVER & AUTHOR EDITION ]]
 local player = game:GetService("Players").LocalPlayer
 local pgui = player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
--- Limpa versões antigas para não sobrepor
-if pgui:FindFirstChild("LuckyHub") then pgui.LuckyHub:Destroy() end
+if pgui:FindFirstChild("NebulaHub") then pgui.NebulaHub:Destroy() end
 
-local LuckyUI = Instance.new("ScreenGui", pgui)
-LuckyUI.Name = "LuckyHub"
-LuckyUI.ResetOnSpawn = false 
+local NebulaUI = Instance.new("ScreenGui", pgui)
+NebulaUI.Name = "NebulaHub"
+NebulaUI.ResetOnSpawn = false 
 
--- Tabela para o ciclo RGB
 local RainbowElements = {}
 local Config = { Toggles = { Lucky = false, Yen = false, Skills = false }, Speed = 0.7 }
 
--- [[ MARCA D'ÁGUA GIGANTE - MADE BY LRX_VBL ]]
-local Watermark = Instance.new("TextLabel", LuckyUI)
+-- [[ MARCA D'ÁGUA ]]
+local Watermark = Instance.new("TextLabel", NebulaUI)
 Watermark.Name = "AuthorTag"
 Watermark.Size = UDim2.new(0, 600, 0, 50)
 Watermark.Position = UDim2.new(0.5, -300, 0, 15)
@@ -39,7 +37,7 @@ Shadow.TextColor3 = Color3.new(0, 0, 0)
 Shadow.TextTransparency = 0.5
 Shadow.ZIndex = 9
 
--- Utilitário: Arrastar
+-- Arrastar
 local function MakeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
     frame.InputBegan:Connect(function(input)
@@ -56,96 +54,145 @@ local function MakeDraggable(frame)
 end
 
 -- [[ PAINEL PRINCIPAL ]]
-local Main = Instance.new("Frame", LuckyUI)
-Main.Size = UDim2.new(0, 250, 0, 320)
-Main.Position = UDim2.new(0.5, -125, 0.5, -100)
-Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+local Main = Instance.new("Frame", NebulaUI)
+Main.Size = UDim2.new(0, 280, 0, 340)          -- já no tamanho final
+Main.Position = UDim2.new(0.5, -140, 0.5, -120)
+Main.BackgroundColor3 = Color3.fromRGB(18, 5, 30)
+Main.BackgroundTransparency = 0.15
 Main.BorderSizePixel = 0
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 15)
+Main.Visible = true                             -- 🔓 ABERTO DESDE O INÍCIO
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 18)
 
 local MainStroke = Instance.new("UIStroke", Main)
-MainStroke.Thickness = 2
+MainStroke.Thickness = 2.5
+MainStroke.Transparency = 0.2
 table.insert(RainbowElements, MainStroke)
-MakeDraggable(Main)
 
-local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 45)
-Title.Text = "Lucky Hub"
-Title.Font = Enum.Font.GothamBold; Title.TextSize = 20; Title.BackgroundTransparency = 1
+local TitleBar = Instance.new("Frame", Main)
+TitleBar.Size = UDim2.new(1, 0, 0, 45)
+TitleBar.BackgroundTransparency = 0.9
+TitleBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TitleBar.ZIndex = 5
+
+local Title = Instance.new("TextLabel", TitleBar)
+Title.Size = UDim2.new(1, 0, 1, 0)
+Title.Text = "🌌  Nébula Hub"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Position = UDim2.new(0, 12, 0, 0)
+Title.ZIndex = 6
 table.insert(RainbowElements, Title)
 
--- [[ BOTÃO DE TREVO GIGANTE 🍀 ]]
-local CloverBtn = Instance.new("TextButton", LuckyUI)
-CloverBtn.Size = UDim2.new(0, 80, 0, 80)
-CloverBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
-CloverBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-CloverBtn.Text = "🍀"
-CloverBtn.TextSize = 45
-Instance.new("UICorner", CloverBtn).CornerRadius = UDim.new(0, 40)
-local CloverStroke = Instance.new("UIStroke", CloverBtn)
-CloverStroke.Thickness = 3
-table.insert(RainbowElements, CloverStroke)
-MakeDraggable(CloverBtn)
+MakeDraggable(Main)
 
-local open = true
-CloverBtn.MouseButton1Click:Connect(function()
+-- [[ SÍMBOLO FLUTUANTE (sem bolha) ]]
+local NebulaBtn = Instance.new("TextButton", NebulaUI)
+NebulaBtn.Size = UDim2.new(0, 120, 0, 120)
+NebulaBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
+NebulaBtn.BackgroundTransparency = 1
+NebulaBtn.Text = "🌌"
+NebulaBtn.TextSize = 75
+NebulaBtn.Font = Enum.Font.GothamBlack
+NebulaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+NebulaBtn.ZIndex = 20
+NebulaBtn.BorderSizePixel = 0
+
+MakeDraggable(NebulaBtn)
+
+local open = true   -- 🔓 JÁ COMEÇA ABERTO
+NebulaBtn.MouseButton1Click:Connect(function()
     open = not open
-    Main.Visible = open
-    if open then Main:TweenSize(UDim2.new(0, 250, 0, 320), "Out", "Back", 0.3, true) end
+    if open then
+        Main.Visible = true
+        Main.Size = UDim2.new(0, 280, 0, 0)
+        Main:TweenSize(UDim2.new(0, 280, 0, 340), "Out", "Back", 0.4, true)
+        Main.BackgroundTransparency = 1
+        TweenService:Create(Main, TweenInfo.new(0.3), {BackgroundTransparency = 0.15}):Play()
+    else
+        Main:TweenSize(UDim2.new(0, 280, 0, 0), "In", "Back", 0.3, true)
+        TweenService:Create(Main, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+        task.wait(0.3)
+        Main.Visible = false
+    end
 end)
 
--- [[ FUNÇÃO DE OPÇÕES ]]
+-- [[ OPÇÕES ]]
 local function NewOption(name, y, key)
     local OptFrame = Instance.new("Frame", Main)
-    OptFrame.Size = UDim2.new(0.9, 0, 0, 50)
-    OptFrame.Position = UDim2.new(0.05, 0, 0, y)
-    OptFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    Instance.new("UICorner", OptFrame).CornerRadius = UDim.new(0, 10)
+    OptFrame.Size = UDim2.new(0.88, 0, 0, 52)
+    OptFrame.Position = UDim2.new(0.06, 0, 0, y)
+    OptFrame.BackgroundColor3 = Color3.fromRGB(30, 15, 45)
+    OptFrame.BackgroundTransparency = 0.3
+    OptFrame.BorderSizePixel = 0
+    Instance.new("UICorner", OptFrame).CornerRadius = UDim.new(0, 12)
+
+    local OptStroke = Instance.new("UIStroke", OptFrame)
+    OptStroke.Thickness = 1.2
+    OptStroke.Transparency = 0.5
+    OptStroke.Color = Color3.fromRGB(180, 180, 180)
 
     local Label = Instance.new("TextLabel", OptFrame)
-    Label.Size = UDim2.new(0.7, 0, 1, 0)
-    Label.Position = UDim2.new(0.05, 0, 0, 0)
-    Label.Text = name; Label.TextColor3 = Color3.new(1,1,1)
-    Label.Font = Enum.Font.GothamMedium; Label.TextSize = 13; Label.TextXAlignment = Enum.TextXAlignment.Left; Label.BackgroundTransparency = 1
+    Label.Size = UDim2.new(0.65, 0, 1, 0)
+    Label.Position = UDim2.new(0.06, 0, 0, 0)
+    Label.Text = name
+    Label.TextColor3 = Color3.new(1, 1, 1)
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextSize = 14
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.BackgroundTransparency = 1
 
     local Switch = Instance.new("TextButton", OptFrame)
-    Switch.Size = UDim2.new(0, 40, 0, 20)
-    Switch.Position = UDim2.new(1, -50, 0.5, -10)
-    Switch.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Switch.Size = UDim2.new(0, 44, 0, 22)
+    Switch.Position = UDim2.new(1, -52, 0.5, -11)
+    Switch.BackgroundColor3 = Color3.fromRGB(40, 25, 60)
+    Switch.BackgroundTransparency = 0.2
     Switch.Text = ""
+    Switch.AutoButtonColor = false
     Instance.new("UICorner", Switch).CornerRadius = UDim.new(1, 0)
 
+    local SwitchStroke = Instance.new("UIStroke", Switch)
+    SwitchStroke.Thickness = 1
+    SwitchStroke.Transparency = 0.3
+    SwitchStroke.Color = Color3.fromRGB(200, 200, 200)
+
     local Knob = Instance.new("Frame", Switch)
-    Knob.Size = UDim2.new(0, 16, 0, 16)
-    Knob.Position = UDim2.new(0, 2, 0.5, -8)
+    Knob.Size = UDim2.new(0, 18, 0, 18)
+    Knob.Position = UDim2.new(0, 2, 0.5, -9)
     Knob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
     Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
     Switch.MouseButton1Click:Connect(function()
         Config.Toggles[key] = not Config.Toggles[key]
         local active = Config.Toggles[key]
-        Knob:TweenPosition(active and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8), "Out", "Quart", 0.2, true)
+        
+        local goalPos = active and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
+        TweenService:Create(Knob, TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = goalPos}):Play()
         
         if active then
             table.insert(RainbowElements, Switch)
+            TweenService:Create(Switch, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 40, 100)}):Play()
+            TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 255, 255)}):Play()
         else
             for i, v in ipairs(RainbowElements) do
                 if v == Switch then table.remove(RainbowElements, i) break end
             end
-            Switch.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            TweenService:Create(Switch, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 25, 60)}):Play()
+            TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 200, 200)}):Play()
         end
     end)
 end
 
--- Opções atualizadas conforme pedido
-NewOption("Auto Lucky Spin", 65, "Lucky")
-NewOption("Auto Yen Farm", 125, "Yen")
-NewOption("auto Habilits", 185, "Skills")
+NewOption("🌀 Auto Lucky Spin", 70, "Lucky")
+NewOption("💎 Auto Yen Farm", 130, "Yen")
+NewOption("⚡ Auto Habilits", 190, "Skills")
 
--- [[ LÓGICA RAINBOW ]]
+-- [[ CORES ]]
 RunService.RenderStepped:Connect(function()
-    local hue = tick() % 5 / 5
-    local color = Color3.fromHSV(hue, 0.8, 1)
+    local hue = 0.65 + 0.1 * math.sin(tick() * 2)
+    local color = Color3.fromHSV(hue, 0.9, 1)
     
     for _, element in pairs(RainbowElements) do
         if element:IsA("UIStroke") then
@@ -158,7 +205,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- [[ BACKEND LOOP ]]
+-- [[ BACKEND ]]
 task.spawn(function()
     while task.wait(Config.Speed) do
         local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("RequestRankedReward", true)

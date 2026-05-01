@@ -1,0 +1,171 @@
+-- [[ LUCKY HUB | RAINBOW CLOVER & AUTHOR EDITION ]]
+local player = game:GetService("Players").LocalPlayer
+local pgui = player:WaitForChild("PlayerGui")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+-- Limpa versões antigas para não sobrepor
+if pgui:FindFirstChild("LuckyHub") then pgui.LuckyHub:Destroy() end
+
+local LuckyUI = Instance.new("ScreenGui", pgui)
+LuckyUI.Name = "LuckyHub"
+LuckyUI.ResetOnSpawn = false 
+
+-- Tabela para o ciclo RGB
+local RainbowElements = {}
+local Config = { Toggles = { Lucky = false, Yen = false, Skills = false }, Speed = 0.7 }
+
+-- [[ MARCA D'ÁGUA GIGANTE - MADE BY LRX_VBL ]]
+local Watermark = Instance.new("TextLabel", LuckyUI)
+Watermark.Name = "AuthorTag"
+Watermark.Size = UDim2.new(0, 600, 0, 50)
+Watermark.Position = UDim2.new(0.5, -300, 0, 15)
+Watermark.BackgroundTransparency = 1
+Watermark.Text = "MADE BY LRX_VBL"
+Watermark.Font = Enum.Font.GothamBlack
+Watermark.TextSize = 42
+Watermark.ZIndex = 10
+table.insert(RainbowElements, Watermark)
+
+local Shadow = Instance.new("TextLabel", Watermark)
+Shadow.Size = UDim2.new(1, 0, 1, 0)
+Shadow.Position = UDim2.new(0, 2, 0, 2)
+Shadow.BackgroundTransparency = 1
+Shadow.Text = "MADE BY LRX_VBL"
+Shadow.Font = Enum.Font.GothamBlack
+Shadow.TextSize = 42
+Shadow.TextColor3 = Color3.new(0, 0, 0)
+Shadow.TextTransparency = 0.5
+Shadow.ZIndex = 9
+
+-- Utilitário: Arrastar
+local function MakeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; dragStart = input.Position; startPos = frame.Position
+            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
+    UIS.InputChanged:Connect(function(input) if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end end)
+end
+
+-- [[ PAINEL PRINCIPAL ]]
+local Main = Instance.new("Frame", LuckyUI)
+Main.Size = UDim2.new(0, 250, 0, 320)
+Main.Position = UDim2.new(0.5, -125, 0.5, -100)
+Main.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Main.BorderSizePixel = 0
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 15)
+
+local MainStroke = Instance.new("UIStroke", Main)
+MainStroke.Thickness = 2
+table.insert(RainbowElements, MainStroke)
+MakeDraggable(Main)
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Text = "Lucky Hub"
+Title.Font = Enum.Font.GothamBold; Title.TextSize = 20; Title.BackgroundTransparency = 1
+table.insert(RainbowElements, Title)
+
+-- [[ BOTÃO DE TREVO GIGANTE 🍀 ]]
+local CloverBtn = Instance.new("TextButton", LuckyUI)
+CloverBtn.Size = UDim2.new(0, 80, 0, 80)
+CloverBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
+CloverBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+CloverBtn.Text = "🍀"
+CloverBtn.TextSize = 45
+Instance.new("UICorner", CloverBtn).CornerRadius = UDim.new(0, 40)
+local CloverStroke = Instance.new("UIStroke", CloverBtn)
+CloverStroke.Thickness = 3
+table.insert(RainbowElements, CloverStroke)
+MakeDraggable(CloverBtn)
+
+local open = true
+CloverBtn.MouseButton1Click:Connect(function()
+    open = not open
+    Main.Visible = open
+    if open then Main:TweenSize(UDim2.new(0, 250, 0, 320), "Out", "Back", 0.3, true) end
+end)
+
+-- [[ FUNÇÃO DE OPÇÕES ]]
+local function NewOption(name, y, key)
+    local OptFrame = Instance.new("Frame", Main)
+    OptFrame.Size = UDim2.new(0.9, 0, 0, 50)
+    OptFrame.Position = UDim2.new(0.05, 0, 0, y)
+    OptFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    Instance.new("UICorner", OptFrame).CornerRadius = UDim.new(0, 10)
+
+    local Label = Instance.new("TextLabel", OptFrame)
+    Label.Size = UDim2.new(0.7, 0, 1, 0)
+    Label.Position = UDim2.new(0.05, 0, 0, 0)
+    Label.Text = name; Label.TextColor3 = Color3.new(1,1,1)
+    Label.Font = Enum.Font.GothamMedium; Label.TextSize = 13; Label.TextXAlignment = Enum.TextXAlignment.Left; Label.BackgroundTransparency = 1
+
+    local Switch = Instance.new("TextButton", OptFrame)
+    Switch.Size = UDim2.new(0, 40, 0, 20)
+    Switch.Position = UDim2.new(1, -50, 0.5, -10)
+    Switch.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Switch.Text = ""
+    Instance.new("UICorner", Switch).CornerRadius = UDim.new(1, 0)
+
+    local Knob = Instance.new("Frame", Switch)
+    Knob.Size = UDim2.new(0, 16, 0, 16)
+    Knob.Position = UDim2.new(0, 2, 0.5, -8)
+    Knob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
+
+    Switch.MouseButton1Click:Connect(function()
+        Config.Toggles[key] = not Config.Toggles[key]
+        local active = Config.Toggles[key]
+        Knob:TweenPosition(active and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8), "Out", "Quart", 0.2, true)
+        
+        if active then
+            table.insert(RainbowElements, Switch)
+        else
+            for i, v in ipairs(RainbowElements) do
+                if v == Switch then table.remove(RainbowElements, i) break end
+            end
+            Switch.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        end
+    end)
+end
+
+-- Opções atualizadas conforme pedido
+NewOption("Auto Lucky Spin", 65, "Lucky")
+NewOption("Auto Yen Farm", 125, "Yen")
+NewOption("auto Habilits", 185, "Skills")
+
+-- [[ LÓGICA RAINBOW ]]
+RunService.RenderStepped:Connect(function()
+    local hue = tick() % 5 / 5
+    local color = Color3.fromHSV(hue, 0.8, 1)
+    
+    for _, element in pairs(RainbowElements) do
+        if element:IsA("UIStroke") then
+            element.Color = color
+        elseif element:IsA("TextLabel") then
+            element.TextColor3 = color
+        elseif element:IsA("TextButton") or element:IsA("Frame") then
+            element.BackgroundColor3 = color
+        end
+    end
+end)
+
+-- [[ BACKEND LOOP ]]
+task.spawn(function()
+    while task.wait(Config.Speed) do
+        local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("RequestRankedReward", true)
+        if Remote then
+            if Config.Toggles.Lucky then pcall(function() Remote:InvokeServer(1) end) end
+            if Config.Toggles.Yen then pcall(function() Remote:InvokeServer(2) end) end
+            if Config.Toggles.Skills then pcall(function() Remote:InvokeServer(4) end) end
+        end
+    end
+end)

@@ -5,6 +5,27 @@ local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
+-- 🔒 VERIFICAÇÃO DE JOGO (Vôleibol Legends)
+if game.PlaceId ~= 73956553001240 then
+    local warnGui = Instance.new("ScreenGui", pgui)
+    warnGui.Name = "WrongGame"
+    local warnLabel = Instance.new("TextLabel", warnGui)
+    warnLabel.Size = UDim2.new(0, 400, 0, 80)
+    warnLabel.Position = UDim2.new(0.5, -200, 0.5, -40)
+    warnLabel.Text = "Jogo Errado Bro"
+    warnLabel.TextSize = 36
+    warnLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+    warnLabel.Font = Enum.Font.GothamBlack
+    warnLabel.BackgroundTransparency = 1
+    warnLabel.TextStrokeTransparency = 0
+    warnLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+
+    task.wait(3)
+    warnGui:Destroy()
+    return
+end
+
+-- Remove hub antigo se existir
 if pgui:FindFirstChild("NebulaHub") then pgui.NebulaHub:Destroy() end
 
 local NebulaUI = Instance.new("ScreenGui", pgui)
@@ -37,7 +58,7 @@ Shadow.TextColor3 = Color3.new(0, 0, 0)
 Shadow.TextTransparency = 0.5
 Shadow.ZIndex = 9
 
--- Arrastar
+-- Função arrastar
 local function MakeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
     frame.InputBegan:Connect(function(input)
@@ -55,12 +76,12 @@ end
 
 -- [[ PAINEL PRINCIPAL ]]
 local Main = Instance.new("Frame", NebulaUI)
-Main.Size = UDim2.new(0, 280, 0, 340)          -- já no tamanho final
+Main.Size = UDim2.new(0, 280, 0, 340)
 Main.Position = UDim2.new(0.5, -140, 0.5, -120)
 Main.BackgroundColor3 = Color3.fromRGB(18, 5, 30)
 Main.BackgroundTransparency = 0.15
 Main.BorderSizePixel = 0
-Main.Visible = true                             -- 🔓 ABERTO DESDE O INÍCIO
+Main.Visible = true
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 18)
 
 local MainStroke = Instance.new("UIStroke", Main)
@@ -88,7 +109,7 @@ table.insert(RainbowElements, Title)
 
 MakeDraggable(Main)
 
--- [[ SÍMBOLO FLUTUANTE (sem bolha) ]]
+-- [[ SÍMBOLO FLUTUANTE ]]
 local NebulaBtn = Instance.new("TextButton", NebulaUI)
 NebulaBtn.Size = UDim2.new(0, 120, 0, 120)
 NebulaBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
@@ -102,7 +123,7 @@ NebulaBtn.BorderSizePixel = 0
 
 MakeDraggable(NebulaBtn)
 
-local open = true   -- 🔓 JÁ COMEÇA ABERTO
+local open = true
 NebulaBtn.MouseButton1Click:Connect(function()
     open = not open
     if open then
@@ -119,7 +140,7 @@ NebulaBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- [[ OPÇÕES ]]
+-- [[ CRIAÇÃO DE OPÇÕES (TOGGLES) ]]
 local function NewOption(name, y, key)
     local OptFrame = Instance.new("Frame", Main)
     OptFrame.Size = UDim2.new(0.88, 0, 0, 52)
@@ -189,7 +210,7 @@ NewOption("🌀 Auto Lucky Spin", 70, "Lucky")
 NewOption("💎 Auto Yen Farm", 130, "Yen")
 NewOption("⚡ Auto Habilits", 190, "Skills")
 
--- [[ CORES ]]
+-- [[ EFEITO ARCO-ÍRIS ]]
 RunService.RenderStepped:Connect(function()
     local hue = 0.65 + 0.1 * math.sin(tick() * 2)
     local color = Color3.fromHSV(hue, 0.9, 1)
@@ -205,7 +226,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- [[ BACKEND ]]
+-- [[ BACKEND - EXECUÇÃO DAS FUNÇÕES ]]
 task.spawn(function()
     while task.wait(Config.Speed) do
         local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("RequestRankedReward", true)

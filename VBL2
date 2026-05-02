@@ -1,4 +1,4 @@
--- ICE HUB | Auto Farm - Interface moderna com bordas arco-íris suaves
+-- ICE HUB | Auto Farm & Pro - Duas abas + bordas arco-íris suaves
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -26,12 +26,10 @@ bubble.Active = true
 bubble.Draggable = true
 bubble.Parent = bubbleGui
 
--- Círculo perfeito
 local bcorner = Instance.new("UICorner")
 bcorner.CornerRadius = UDim.new(1, 0)
 bcorner.Parent = bubble
 
--- Borda arco-íris
 local bstroke = Instance.new("UIStroke")
 bstroke.Color = Color3.fromRGB(255, 255, 255)
 bstroke.Thickness = 2
@@ -43,8 +41,8 @@ screenGui.Name = "ICEHUB"
 screenGui.Parent = playerGui
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 240)
-main.Position = UDim2.new(0.5, -130, 0.5, -120)
+main.Size = UDim2.new(0, 260, 0, 300)
+main.Position = UDim2.new(0.5, -130, 0.5, -150)
 main.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
 main.BorderSizePixel = 0
 main.Active = true
@@ -60,7 +58,7 @@ mainStroke.Color = Color3.fromRGB(255, 255, 255)
 mainStroke.Thickness = 2
 mainStroke.Parent = main
 
--- Título ICE HUB
+-- Título
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 36)
 titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -82,7 +80,7 @@ title.TextSize = 18
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = titleBar
 
--- Botão fechar (X)
+-- Botão fechar
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 22, 0, 22)
 closeBtn.Position = UDim2.new(1, -28, 0, 7)
@@ -97,10 +95,79 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 4)
 closeCorner.Parent = closeBtn
 
+-- ========== BARRA DE ABAS ==========
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, -20, 0, 34)
+tabBar.Position = UDim2.new(0, 10, 0, 42)
+tabBar.BackgroundTransparency = 1
+tabBar.Parent = main
+
+local tabFarmBtn = Instance.new("TextButton")
+tabFarmBtn.Size = UDim2.new(0.5, -3, 1, -4)
+tabFarmBtn.Position = UDim2.new(0, 0, 0, 2)
+tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+tabFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+tabFarmBtn.Text = "Farm"
+tabFarmBtn.Font = Enum.Font.GothamBold
+tabFarmBtn.TextSize = 14
+tabFarmBtn.Parent = tabBar
+local tabFarmCorner = Instance.new("UICorner")
+tabFarmCorner.CornerRadius = UDim.new(0, 6)
+tabFarmCorner.Parent = tabFarmBtn
+
+local tabProBtn = Instance.new("TextButton")
+tabProBtn.Size = UDim2.new(0.5, -3, 1, -4)
+tabProBtn.Position = UDim2.new(0.5, 3, 0, 2)
+tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+tabProBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+tabProBtn.Text = "Pro"
+tabProBtn.Font = Enum.Font.GothamBold
+tabProBtn.TextSize = 14
+tabProBtn.Parent = tabBar
+local tabProCorner = Instance.new("UICorner")
+tabProCorner.CornerRadius = UDim.new(0, 6)
+tabProCorner.Parent = tabProBtn
+
+-- ========== CONTAINERS DAS ABAS ==========
+local tabFarmContainer = Instance.new("Frame")
+tabFarmContainer.Size = UDim2.new(1, -20, 1, -130)
+tabFarmContainer.Position = UDim2.new(0, 10, 0, 82)
+tabFarmContainer.BackgroundTransparency = 1
+tabFarmContainer.Visible = true
+tabFarmContainer.Parent = main
+
+local tabProContainer = Instance.new("Frame")
+tabProContainer.Size = UDim2.new(1, -20, 1, -130)
+tabProContainer.Position = UDim2.new(0, 10, 0, 82)
+tabProContainer.BackgroundTransparency = 1
+tabProContainer.Visible = false
+tabProContainer.Parent = main
+
+local function switchTab(tab)
+    if tab == "Farm" then
+        tabFarmContainer.Visible = true
+        tabProContainer.Visible = false
+        tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        tabFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabProBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    else
+        tabFarmContainer.Visible = false
+        tabProContainer.Visible = true
+        tabProBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        tabFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        tabProBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tabFarmBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    end
+end
+
+tabFarmBtn.MouseButton1Click:Connect(function() switchTab("Farm") end)
+tabProBtn.MouseButton1Click:Connect(function() switchTab("Pro") end)
+
 -- Status
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Size = UDim2.new(1, -24, 0, 30)
-statusLabel.Position = UDim2.new(0, 12, 1, -40)
+statusLabel.Position = UDim2.new(0, 12, 1, -35)
 statusLabel.BackgroundTransparency = 1
 statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
 statusLabel.Text = "Pronto para iniciar"
@@ -111,13 +178,13 @@ statusLabel.Parent = main
 
 -- ==================== EFEITO ARCO-ÍRIS SUAVE ====================
 local rainbowColors = {
-    Color3.fromRGB(255, 0, 0),      -- Vermelho
-    Color3.fromRGB(255, 127, 0),    -- Laranja
-    Color3.fromRGB(255, 255, 0),    -- Amarelo
-    Color3.fromRGB(0, 255, 0),      -- Verde
-    Color3.fromRGB(0, 0, 255),      -- Azul
-    Color3.fromRGB(75, 0, 130),     -- Índigo
-    Color3.fromRGB(143, 0, 255)     -- Violeta
+    Color3.fromRGB(255, 0, 0),
+    Color3.fromRGB(255, 127, 0),
+    Color3.fromRGB(255, 255, 0),
+    Color3.fromRGB(0, 255, 0),
+    Color3.fromRGB(0, 0, 255),
+    Color3.fromRGB(75, 0, 130),
+    Color3.fromRGB(143, 0, 255)
 }
 
 local function lerpColor(a, b, t)
@@ -143,12 +210,8 @@ task.spawn(function()
     local colorIndex = 1
     while true do
         if not screenGui or not screenGui.Parent then break end
-        if mainStroke then
-            mainStroke.Color = gradient[colorIndex]
-        end
-        if bstroke then
-            bstroke.Color = gradient[colorIndex]
-        end
+        if mainStroke then mainStroke.Color = gradient[colorIndex] end
+        if bstroke then bstroke.Color = gradient[colorIndex] end
         colorIndex = (colorIndex % #gradient) + 1
         task.wait(0.03)
     end
@@ -161,16 +224,16 @@ if not Remote then
     title.Text = "⚠ Remote perdido"
     statusLabel.Text = "RequestRankedReward não encontrado"
 else
-    local function createToggle(name, yPos, code)
+    local function createToggle(name, yPos, code, parent)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -24, 0, 42)
-        btn.Position = UDim2.new(0, 12, 0, yPos)
+        btn.Size = UDim2.new(1, 0, 0, 42)
+        btn.Position = UDim2.new(0, 0, 0, yPos)
         btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
         btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         btn.Text = name .. "  ➜  OFF"
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 15
-        btn.Parent = main
+        btn.TextSize = 14
+        btn.Parent = parent
 
         local btnCorner = Instance.new("UICorner")
         btnCorner.CornerRadius = UDim.new(0, 6)
@@ -215,9 +278,15 @@ else
         end)
     end
 
-    createToggle("Auto Lucky Spins", 50, 7)   -- código 7
-    createToggle("Auto Yen", 100, 2)          -- código 2
-    createToggle("Auto Lucky Habilits", 150, 4) -- código 4
+    -- Aba Farm (código 1 na primeira opção)
+    createToggle("Auto Lucky Spins", 0, 1, tabFarmContainer)   -- ALTERADO: 7 → 1
+    createToggle("Auto Yen", 48, 2, tabFarmContainer)
+    createToggle("Auto Lucky Habilits", 96, 4, tabFarmContainer)
+
+    -- Aba Pro
+    createToggle("Style Pro", 0, 7, tabProContainer)
+    createToggle("Yen Pro", 48, 10, tabProContainer)
+    createToggle("Habilits Pro", 96, 8, tabProContainer)
 end
 
 -- ==================== FECHAR / BOLHA ====================

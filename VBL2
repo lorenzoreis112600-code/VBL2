@@ -1,239 +1,232 @@
--- [[ NÉBULA HUB | RAINBOW CLOVER & AUTHOR EDITION ]]
-local player = game:GetService("Players").LocalPlayer
-local pgui = player:WaitForChild("PlayerGui")
-local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+-- ICE HUB | Auto Farm - Interface moderna com bordas arco-íris suaves
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- 🔒 VERIFICAÇÃO DE JOGO (Vôleibol Legends)
-if game.PlaceId ~= 73956553001240 then
-    local warnGui = Instance.new("ScreenGui", pgui)
-    warnGui.Name = "WrongGame"
-    local warnLabel = Instance.new("TextLabel", warnGui)
-    warnLabel.Size = UDim2.new(0, 400, 0, 80)
-    warnLabel.Position = UDim2.new(0.5, -200, 0.5, -40)
-    warnLabel.Text = "Jogo Errado Bro"
-    warnLabel.TextSize = 36
-    warnLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
-    warnLabel.Font = Enum.Font.GothamBlack
-    warnLabel.BackgroundTransparency = 1
-    warnLabel.TextStrokeTransparency = 0
-    warnLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+-- Limpeza
+if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
+if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
 
-    task.wait(3)
-    warnGui:Destroy()
-    return
+-- ==================== BOLHA PRETA (arrastável) ====================
+local bubbleGui = Instance.new("ScreenGui")
+bubbleGui.Name = "ICEBubble"
+bubbleGui.Parent = playerGui
+
+local bubble = Instance.new("TextButton")
+bubble.Size = UDim2.new(0, 70, 0, 70)
+bubble.Position = UDim2.new(0.5, -35, 0.4, -35)
+bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
+bubble.Text = "ICE"
+bubble.Font = Enum.Font.GothamBold
+bubble.TextSize = 24
+bubble.Visible = false
+bubble.Active = true
+bubble.Draggable = true
+bubble.Parent = bubbleGui
+
+-- Círculo perfeito
+local bcorner = Instance.new("UICorner")
+bcorner.CornerRadius = UDim.new(1, 0)
+bcorner.Parent = bubble
+
+-- Borda arco-íris
+local bstroke = Instance.new("UIStroke")
+bstroke.Color = Color3.fromRGB(255, 255, 255)
+bstroke.Thickness = 2
+bstroke.Parent = bubble
+
+-- ==================== GUI PRINCIPAL ====================
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ICEHUB"
+screenGui.Parent = playerGui
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 260, 0, 240)
+main.Position = UDim2.new(0.5, -130, 0.5, -120)
+main.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+main.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 8)
+mainCorner.Parent = main
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(255, 255, 255)
+mainStroke.Thickness = 2
+mainStroke.Parent = main
+
+-- Título ICE HUB
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 36)
+titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = main
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = titleBar
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 1, 0)
+title.Position = UDim2.new(0, 15, 0, 0)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(220, 220, 220)
+title.Text = "❄️ ICE HUB"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
+
+-- Botão fechar (X)
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 22, 0, 22)
+closeBtn.Position = UDim2.new(1, -28, 0, 7)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Text = "✕"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+closeBtn.Parent = titleBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 4)
+closeCorner.Parent = closeBtn
+
+-- Status
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -24, 0, 30)
+statusLabel.Position = UDim2.new(0, 12, 1, -40)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+statusLabel.Text = "Pronto para iniciar"
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 12
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Parent = main
+
+-- ==================== EFEITO ARCO-ÍRIS SUAVE ====================
+local rainbowColors = {
+    Color3.fromRGB(255, 0, 0),      -- Vermelho
+    Color3.fromRGB(255, 127, 0),    -- Laranja
+    Color3.fromRGB(255, 255, 0),    -- Amarelo
+    Color3.fromRGB(0, 255, 0),      -- Verde
+    Color3.fromRGB(0, 0, 255),      -- Azul
+    Color3.fromRGB(75, 0, 130),     -- Índigo
+    Color3.fromRGB(143, 0, 255)     -- Violeta
+}
+
+local function lerpColor(a, b, t)
+    return Color3.new(
+        a.R + (b.R - a.R) * t,
+        a.G + (b.G - a.G) * t,
+        a.B + (b.B - a.B) * t
+    )
 end
 
--- Remove hub antigo se existir
-if pgui:FindFirstChild("NebulaHub") then pgui.NebulaHub:Destroy() end
-
-local NebulaUI = Instance.new("ScreenGui", pgui)
-NebulaUI.Name = "NebulaHub"
-NebulaUI.ResetOnSpawn = false 
-
-local RainbowElements = {}
-local Config = { Toggles = { Lucky = false, Yen = false, Skills = false }, Speed = 0.7 }
-
--- [[ MARCA D'ÁGUA ]]
-local Watermark = Instance.new("TextLabel", NebulaUI)
-Watermark.Name = "AuthorTag"
-Watermark.Size = UDim2.new(0, 600, 0, 50)
-Watermark.Position = UDim2.new(0.5, -300, 0, 15)
-Watermark.BackgroundTransparency = 1
-Watermark.Text = "MADE BY LRX_VBL"
-Watermark.Font = Enum.Font.GothamBlack
-Watermark.TextSize = 42
-Watermark.ZIndex = 10
-table.insert(RainbowElements, Watermark)
-
-local Shadow = Instance.new("TextLabel", Watermark)
-Shadow.Size = UDim2.new(1, 0, 1, 0)
-Shadow.Position = UDim2.new(0, 2, 0, 2)
-Shadow.BackgroundTransparency = 1
-Shadow.Text = "MADE BY LRX_VBL"
-Shadow.Font = Enum.Font.GothamBlack
-Shadow.TextSize = 42
-Shadow.TextColor3 = Color3.new(0, 0, 0)
-Shadow.TextTransparency = 0.5
-Shadow.ZIndex = 9
-
--- Função arrastar
-local function MakeDraggable(frame)
-    local dragging, dragInput, dragStart, startPos
-    frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true; dragStart = input.Position; startPos = frame.Position
-            input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
-        end
-    end)
-    frame.InputChanged:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end end)
-    UIS.InputChanged:Connect(function(input) if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end end)
-end
-
--- [[ PAINEL PRINCIPAL ]]
-local Main = Instance.new("Frame", NebulaUI)
-Main.Size = UDim2.new(0, 280, 0, 340)
-Main.Position = UDim2.new(0.5, -140, 0.5, -120)
-Main.BackgroundColor3 = Color3.fromRGB(18, 5, 30)
-Main.BackgroundTransparency = 0.15
-Main.BorderSizePixel = 0
-Main.Visible = true
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 18)
-
-local MainStroke = Instance.new("UIStroke", Main)
-MainStroke.Thickness = 2.5
-MainStroke.Transparency = 0.2
-table.insert(RainbowElements, MainStroke)
-
-local TitleBar = Instance.new("Frame", Main)
-TitleBar.Size = UDim2.new(1, 0, 0, 45)
-TitleBar.BackgroundTransparency = 0.9
-TitleBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-TitleBar.ZIndex = 5
-
-local Title = Instance.new("TextLabel", TitleBar)
-Title.Size = UDim2.new(1, 0, 1, 0)
-Title.Text = "🌌  Nébula Hub"
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundTransparency = 1
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Position = UDim2.new(0, 12, 0, 0)
-Title.ZIndex = 6
-table.insert(RainbowElements, Title)
-
-MakeDraggable(Main)
-
--- [[ SÍMBOLO FLUTUANTE ]]
-local NebulaBtn = Instance.new("TextButton", NebulaUI)
-NebulaBtn.Size = UDim2.new(0, 120, 0, 120)
-NebulaBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
-NebulaBtn.BackgroundTransparency = 1
-NebulaBtn.Text = "🌌"
-NebulaBtn.TextSize = 75
-NebulaBtn.Font = Enum.Font.GothamBlack
-NebulaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-NebulaBtn.ZIndex = 20
-NebulaBtn.BorderSizePixel = 0
-
-MakeDraggable(NebulaBtn)
-
-local open = true
-NebulaBtn.MouseButton1Click:Connect(function()
-    open = not open
-    if open then
-        Main.Visible = true
-        Main.Size = UDim2.new(0, 280, 0, 0)
-        Main:TweenSize(UDim2.new(0, 280, 0, 340), "Out", "Back", 0.4, true)
-        Main.BackgroundTransparency = 1
-        TweenService:Create(Main, TweenInfo.new(0.3), {BackgroundTransparency = 0.15}):Play()
-    else
-        Main:TweenSize(UDim2.new(0, 280, 0, 0), "In", "Back", 0.3, true)
-        TweenService:Create(Main, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
-        task.wait(0.3)
-        Main.Visible = false
-    end
-end)
-
--- [[ CRIAÇÃO DE OPÇÕES (TOGGLES) ]]
-local function NewOption(name, y, key)
-    local OptFrame = Instance.new("Frame", Main)
-    OptFrame.Size = UDim2.new(0.88, 0, 0, 52)
-    OptFrame.Position = UDim2.new(0.06, 0, 0, y)
-    OptFrame.BackgroundColor3 = Color3.fromRGB(30, 15, 45)
-    OptFrame.BackgroundTransparency = 0.3
-    OptFrame.BorderSizePixel = 0
-    Instance.new("UICorner", OptFrame).CornerRadius = UDim.new(0, 12)
-
-    local OptStroke = Instance.new("UIStroke", OptFrame)
-    OptStroke.Thickness = 1.2
-    OptStroke.Transparency = 0.5
-    OptStroke.Color = Color3.fromRGB(180, 180, 180)
-
-    local Label = Instance.new("TextLabel", OptFrame)
-    Label.Size = UDim2.new(0.65, 0, 1, 0)
-    Label.Position = UDim2.new(0.06, 0, 0, 0)
-    Label.Text = name
-    Label.TextColor3 = Color3.new(1, 1, 1)
-    Label.Font = Enum.Font.GothamMedium
-    Label.TextSize = 14
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.BackgroundTransparency = 1
-
-    local Switch = Instance.new("TextButton", OptFrame)
-    Switch.Size = UDim2.new(0, 44, 0, 22)
-    Switch.Position = UDim2.new(1, -52, 0.5, -11)
-    Switch.BackgroundColor3 = Color3.fromRGB(40, 25, 60)
-    Switch.BackgroundTransparency = 0.2
-    Switch.Text = ""
-    Switch.AutoButtonColor = false
-    Instance.new("UICorner", Switch).CornerRadius = UDim.new(1, 0)
-
-    local SwitchStroke = Instance.new("UIStroke", Switch)
-    SwitchStroke.Thickness = 1
-    SwitchStroke.Transparency = 0.3
-    SwitchStroke.Color = Color3.fromRGB(200, 200, 200)
-
-    local Knob = Instance.new("Frame", Switch)
-    Knob.Size = UDim2.new(0, 18, 0, 18)
-    Knob.Position = UDim2.new(0, 2, 0.5, -9)
-    Knob.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-    Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
-
-    Switch.MouseButton1Click:Connect(function()
-        Config.Toggles[key] = not Config.Toggles[key]
-        local active = Config.Toggles[key]
-        
-        local goalPos = active and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
-        TweenService:Create(Knob, TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = goalPos}):Play()
-        
-        if active then
-            table.insert(RainbowElements, Switch)
-            TweenService:Create(Switch, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70, 40, 100)}):Play()
-            TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 255, 255)}):Play()
-        else
-            for i, v in ipairs(RainbowElements) do
-                if v == Switch then table.remove(RainbowElements, i) break end
-            end
-            TweenService:Create(Switch, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 25, 60)}):Play()
-            TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 200, 200)}):Play()
-        end
-    end)
-end
-
-NewOption("🌀 Auto Lucky Spin", 70, "Lucky")
-NewOption("💎 Auto Yen Farm", 130, "Yen")
-NewOption("⚡ Auto Habilits", 190, "Skills")
-
--- [[ EFEITO ARCO-ÍRIS ]]
-RunService.RenderStepped:Connect(function()
-    local hue = 0.65 + 0.1 * math.sin(tick() * 2)
-    local color = Color3.fromHSV(hue, 0.9, 1)
-    
-    for _, element in pairs(RainbowElements) do
-        if element:IsA("UIStroke") then
-            element.Color = color
-        elseif element:IsA("TextLabel") then
-            element.TextColor3 = color
-        elseif element:IsA("TextButton") or element:IsA("Frame") then
-            element.BackgroundColor3 = color
-        end
-    end
-end)
-
--- [[ BACKEND - EXECUÇÃO DAS FUNÇÕES ]]
 task.spawn(function()
-    while task.wait(Config.Speed) do
-        local Remote = game:GetService("ReplicatedStorage"):FindFirstChild("RequestRankedReward", true)
-        if Remote then
-            if Config.Toggles.Lucky then pcall(function() Remote:InvokeServer(1) end) end
-            if Config.Toggles.Yen then pcall(function() Remote:InvokeServer(2) end) end
-            if Config.Toggles.Skills then pcall(function() Remote:InvokeServer(4) end) end
+    local gradient = {}
+    local steps = 50
+    for i = 1, #rainbowColors do
+        local current = rainbowColors[i]
+        local nextColor = rainbowColors[(i % #rainbowColors) + 1]
+        for j = 0, steps - 1 do
+            local t = j / steps
+            table.insert(gradient, lerpColor(current, nextColor, t))
         end
     end
+
+    local colorIndex = 1
+    while true do
+        if not screenGui or not screenGui.Parent then break end
+        if mainStroke then
+            mainStroke.Color = gradient[colorIndex]
+        end
+        if bstroke then
+            bstroke.Color = gradient[colorIndex]
+        end
+        colorIndex = (colorIndex % #gradient) + 1
+        task.wait(0.03)
+    end
+end)
+
+-- ==================== LÓGICA DOS TOGGLES ====================
+local Remote = ReplicatedStorage:FindFirstChild("RequestRankedReward", true)
+
+if not Remote then
+    title.Text = "⚠ Remote perdido"
+    statusLabel.Text = "RequestRankedReward não encontrado"
+else
+    local function createToggle(name, yPos, code)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, -24, 0, 42)
+        btn.Position = UDim2.new(0, 12, 0, yPos)
+        btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Text = name .. "  ➜  OFF"
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 15
+        btn.Parent = main
+
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 6)
+        btnCorner.Parent = btn
+
+        local isActive = false
+        local success, fail = 0, 0
+
+        local function updateStatusText()
+            statusLabel.Text = string.format("%s: %d ✓  |  %d ✗", name, success, fail)
+        end
+
+        local loopCoroutine
+        btn.MouseButton1Click:Connect(function()
+            isActive = not isActive
+            if isActive then
+                btn.Text = name .. "  ➜  ON"
+                btn.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
+                loopCoroutine = task.spawn(function()
+                    while isActive do
+                        local ok, err = pcall(function()
+                            Remote:InvokeServer(code)
+                        end)
+                        if ok then
+                            success += 1
+                        else
+                            fail += 1
+                            warn("[ICE HUB] Erro ", name, ": ", err)
+                        end
+                        updateStatusText()
+                        task.wait(0.8)
+                    end
+                end)
+                updateStatusText()
+            else
+                btn.Text = name .. "  ➜  OFF"
+                btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+                isActive = false
+                success, fail = 0, 0
+                statusLabel.Text = "Pronto para iniciar"
+            end
+        end)
+    end
+
+    createToggle("Auto Lucky Spins", 50, 7)   -- código 7
+    createToggle("Auto Yen", 100, 2)          -- código 2
+    createToggle("Auto Lucky Habilits", 150, 4) -- código 4
+end
+
+-- ==================== FECHAR / BOLHA ====================
+closeBtn.MouseButton1Click:Connect(function()
+    main.Visible = false
+    bubble.Visible = true
+end)
+
+bubble.MouseButton1Click:Connect(function()
+    main.Visible = true
+    bubble.Visible = false
 end)

@@ -1,24 +1,30 @@
--- ICE HUB | Proteção contra múltiplas execuções + Toggles estilizados + bolha no topo
+-- ICE HUB | Mensagem arco-íris + Toggles estilizados + bolha no topo + proteção contra múltiplas execuções
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
 -- ==================== PROTEÇÃO CONTRA EXECUÇÕES SIMULTÂNEAS ====================
--- Sinaliza para qualquer script anterior que ele deve parar imediatamente
 _G.StopAllICEHUBLoops = true
-task.wait(0.15) -- pequeno delay para garantir que os loops antigos detectem a flag
+task.wait(0.15)
 
--- Limpeza total de GUIs anteriores (já existente, mas mantida)
-if playerGui:FindFirstChild("ICEHUB") then
-    playerGui.ICEHUB:Destroy()
-end
-if playerGui:FindFirstChild("ICEBubble") then
-    playerGui.ICEBubble:Destroy()
-end
+if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
+if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
 
--- Agora redefine a flag para false, pois este novo script está ativo
 _G.StopAllICEHUBLoops = false
+
+-- ==================== MENSAGEM ARCO-ÍRIS (CRIADO POR LORENZO) ====================
+local bannerGui = Instance.new("ScreenGui", playerGui)
+bannerGui.Name = "ICEBanner"
+
+local bannerLabel = Instance.new("TextLabel", bannerGui)
+bannerLabel.Size = UDim2.new(0.8, 0, 0, 30)
+bannerLabel.Position = UDim2.new(0.1, 0, 0, 0) -- centralizado horizontalmente e colado no topo
+bannerLabel.BackgroundTransparency = 1
+bannerLabel.Font = Enum.Font.GothamBold
+bannerLabel.TextSize = 16
+bannerLabel.Text = "Script Criado Por Lorenzo | tiktok lrxvbl"
+bannerLabel.TextColor3 = Color3.new(1, 1, 1) -- será alterado pelo arco-íris
 
 -- ==================== BOLHA PRETA (arrastável, no topo) ====================
 local bubbleGui = Instance.new("ScreenGui")
@@ -27,7 +33,7 @@ bubbleGui.Parent = playerGui
 
 local bubble = Instance.new("TextButton")
 bubble.Size = UDim2.new(0, 70, 0, 70)
-bubble.Position = UDim2.new(0.5, -35, 0, 10) -- centralizada no topo
+bubble.Position = UDim2.new(0.5, -35, 0, 10) -- ajustada para ficar abaixo da mensagem (a mensagem ocupa 30px de altura)
 bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
 bubble.Text = "ICE"
@@ -38,14 +44,12 @@ bubble.Active = true
 bubble.Draggable = true
 bubble.Parent = bubbleGui
 
-local bcorner = Instance.new("UICorner")
+local bcorner = Instance.new("UICorner", bubble)
 bcorner.CornerRadius = UDim.new(1, 0)
-bcorner.Parent = bubble
 
-local bstroke = Instance.new("UIStroke")
+local bstroke = Instance.new("UIStroke", bubble)
 bstroke.Color = Color3.fromRGB(255, 255, 255)
 bstroke.Thickness = 2
-bstroke.Parent = bubble
 
 -- ==================== GUI PRINCIPAL ====================
 local screenGui = Instance.new("ScreenGui")
@@ -61,27 +65,21 @@ main.Active = true
 main.Draggable = true
 main.Parent = screenGui
 
-local mainCorner = Instance.new("UICorner")
+local mainCorner = Instance.new("UICorner", main)
 mainCorner.CornerRadius = UDim.new(0, 8)
-mainCorner.Parent = main
 
-local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(255, 255, 255)
+local mainStroke = Instance.new("UIStroke", main)
 mainStroke.Thickness = 2
-mainStroke.Parent = main
 
--- Título
-local titleBar = Instance.new("Frame")
+-- Título (agora a mensagem arco-íris fica separada; mantemos o título original "ICE HUB")
+local titleBar = Instance.new("Frame", main)
 titleBar.Size = UDim2.new(1, 0, 0, 36)
 titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-titleBar.BorderSizePixel = 0
-titleBar.Parent = main
 
-local titleCorner = Instance.new("UICorner")
+local titleCorner = Instance.new("UICorner", titleBar)
 titleCorner.CornerRadius = UDim.new(0, 8)
-titleCorner.Parent = titleBar
 
-local title = Instance.new("TextLabel")
+local title = Instance.new("TextLabel", titleBar)
 title.Size = UDim2.new(1, -40, 1, 0)
 title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
@@ -90,10 +88,9 @@ title.Text = "❄️ ICE HUB"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = titleBar
 
 -- Botão fechar
-local closeBtn = Instance.new("TextButton")
+local closeBtn = Instance.new("TextButton", titleBar)
 closeBtn.Size = UDim2.new(0, 22, 0, 22)
 closeBtn.Position = UDim2.new(1, -28, 0, 7)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
@@ -101,20 +98,17 @@ closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Text = "✕"
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 14
-closeBtn.Parent = titleBar
 
-local closeCorner = Instance.new("UICorner")
+local closeCorner = Instance.new("UICorner", closeBtn)
 closeCorner.CornerRadius = UDim.new(0, 4)
-closeCorner.Parent = closeBtn
 
--- ========== BARRA DE ABAS ==========
-local tabBar = Instance.new("Frame")
+-- Barra de abas e containers (mantidos iguais)
+local tabBar = Instance.new("Frame", main)
 tabBar.Size = UDim2.new(1, -20, 0, 34)
 tabBar.Position = UDim2.new(0, 10, 0, 42)
 tabBar.BackgroundTransparency = 1
-tabBar.Parent = main
 
-local tabFarmBtn = Instance.new("TextButton")
+local tabFarmBtn = Instance.new("TextButton", tabBar)
 tabFarmBtn.Size = UDim2.new(0.5, -3, 1, -4)
 tabFarmBtn.Position = UDim2.new(0, 0, 0, 2)
 tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
@@ -122,12 +116,9 @@ tabFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 tabFarmBtn.Text = "Farm"
 tabFarmBtn.Font = Enum.Font.GothamBold
 tabFarmBtn.TextSize = 14
-tabFarmBtn.Parent = tabBar
-local tabFarmCorner = Instance.new("UICorner")
-tabFarmCorner.CornerRadius = UDim.new(0, 6)
-tabFarmCorner.Parent = tabFarmBtn
+Instance.new("UICorner", tabFarmBtn).CornerRadius = UDim.new(0, 6)
 
-local tabProBtn = Instance.new("TextButton")
+local tabProBtn = Instance.new("TextButton", tabBar)
 tabProBtn.Size = UDim2.new(0.5, -3, 1, -4)
 tabProBtn.Position = UDim2.new(0.5, 3, 0, 2)
 tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -135,25 +126,19 @@ tabProBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
 tabProBtn.Text = "Pro"
 tabProBtn.Font = Enum.Font.GothamBold
 tabProBtn.TextSize = 14
-tabProBtn.Parent = tabBar
-local tabProCorner = Instance.new("UICorner")
-tabProCorner.CornerRadius = UDim.new(0, 6)
-tabProCorner.Parent = tabProBtn
+Instance.new("UICorner", tabProBtn).CornerRadius = UDim.new(0, 6)
 
--- ========== CONTAINERS DAS ABAS ==========
-local tabFarmContainer = Instance.new("Frame")
+local tabFarmContainer = Instance.new("Frame", main)
 tabFarmContainer.Size = UDim2.new(1, -20, 1, -130)
 tabFarmContainer.Position = UDim2.new(0, 10, 0, 82)
 tabFarmContainer.BackgroundTransparency = 1
 tabFarmContainer.Visible = true
-tabFarmContainer.Parent = main
 
-local tabProContainer = Instance.new("Frame")
+local tabProContainer = Instance.new("Frame", main)
 tabProContainer.Size = UDim2.new(1, -20, 1, -130)
 tabProContainer.Position = UDim2.new(0, 10, 0, 82)
 tabProContainer.BackgroundTransparency = 1
 tabProContainer.Visible = false
-tabProContainer.Parent = main
 
 local function switchTab(tab)
     if tab == "Farm" then
@@ -176,8 +161,7 @@ end
 tabFarmBtn.MouseButton1Click:Connect(function() switchTab("Farm") end)
 tabProBtn.MouseButton1Click:Connect(function() switchTab("Pro") end)
 
--- Status
-local statusLabel = Instance.new("TextLabel")
+local statusLabel = Instance.new("TextLabel", main)
 statusLabel.Size = UDim2.new(1, -24, 0, 30)
 statusLabel.Position = UDim2.new(0, 12, 1, -35)
 statusLabel.BackgroundTransparency = 1
@@ -186,9 +170,8 @@ statusLabel.Text = "Pronto para iniciar"
 statusLabel.Font = Enum.Font.Gotham
 statusLabel.TextSize = 12
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-statusLabel.Parent = main
 
--- ==================== EFEITO ARCO-ÍRIS SUAVE ====================
+-- ==================== EFEITO ARCO-ÍRIS SUAVE (BORDAS + TEXTO) ====================
 local rainbowColors = {
     Color3.fromRGB(255, 0, 0),
     Color3.fromRGB(255, 127, 0),
@@ -220,10 +203,11 @@ task.spawn(function()
     end
 
     local colorIndex = 1
-    -- Loop principal do arco-íris, agora verifica a flag de parada
     while screenGui and screenGui.Parent and not _G.StopAllICEHUBLoops do
-        if mainStroke then mainStroke.Color = gradient[colorIndex] end
-        if bstroke then bstroke.Color = gradient[colorIndex] end
+        local c = gradient[colorIndex]
+        if mainStroke then mainStroke.Color = c end
+        if bstroke then bstroke.Color = c end
+        if bannerLabel then bannerLabel.TextColor3 = c end -- aplica a cor do arco-íris ao texto
         colorIndex = (colorIndex % #gradient) + 1
         task.wait(0.03)
     end
@@ -237,18 +221,14 @@ if not Remote then
     statusLabel.Text = "RequestRankedReward não encontrado"
 else
     local function createToggle(titleText, subtitleText, yPos, code, parent)
-        -- Container do toggle
-        local toggleFrame = Instance.new("Frame")
+        local toggleFrame = Instance.new("Frame", parent)
         toggleFrame.Size = UDim2.new(1, 0, 0, 42)
         toggleFrame.Position = UDim2.new(0, 0, 0, yPos)
         toggleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        toggleFrame.Parent = parent
-        local toggleCorner = Instance.new("UICorner")
+        local toggleCorner = Instance.new("UICorner", toggleFrame)
         toggleCorner.CornerRadius = UDim.new(0, 6)
-        toggleCorner.Parent = toggleFrame
 
-        -- Título
-        local titleLabel = Instance.new("TextLabel")
+        local titleLabel = Instance.new("TextLabel", toggleFrame)
         titleLabel.Size = UDim2.new(0.6, 0, 0, 22)
         titleLabel.Position = UDim2.new(0, 10, 0, 2)
         titleLabel.BackgroundTransparency = 1
@@ -257,10 +237,8 @@ else
         titleLabel.Font = Enum.Font.GothamBold
         titleLabel.TextSize = 14
         titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-        titleLabel.Parent = toggleFrame
 
-        -- Subtítulo
-        local subLabel = Instance.new("TextLabel")
+        local subLabel = Instance.new("TextLabel", toggleFrame)
         subLabel.Size = UDim2.new(0.6, 0, 0, 16)
         subLabel.Position = UDim2.new(0, 10, 0, 24)
         subLabel.BackgroundTransparency = 1
@@ -269,10 +247,8 @@ else
         subLabel.Font = Enum.Font.Gotham
         subLabel.TextSize = 10
         subLabel.TextXAlignment = Enum.TextXAlignment.Left
-        subLabel.Parent = toggleFrame
 
-        -- Status OFF/ON
-        local statusButton = Instance.new("TextButton")
+        local statusButton = Instance.new("TextButton", toggleFrame)
         statusButton.Size = UDim2.new(0, 60, 0, 24)
         statusButton.Position = UDim2.new(1, -70, 0, 9)
         statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
@@ -280,10 +256,8 @@ else
         statusButton.Text = "OFF"
         statusButton.Font = Enum.Font.GothamBold
         statusButton.TextSize = 14
-        statusButton.Parent = toggleFrame
-        local statusCorner = Instance.new("UICorner")
+        local statusCorner = Instance.new("UICorner", statusButton)
         statusCorner.CornerRadius = UDim.new(0, 4)
-        statusCorner.Parent = statusButton
 
         local isActive = false
         local success, fail = 0, 0
@@ -299,21 +273,14 @@ else
                 statusButton.Text = "ON"
                 statusButton.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
                 loopCoroutine = task.spawn(function()
-                    -- Loop do toggle agora verifica a flag global de parada
                     while isActive and not _G.StopAllICEHUBLoops do
                         local ok, err = pcall(function()
                             Remote:InvokeServer(code)
                         end)
-                        if ok then
-                            success += 1
-                        else
-                            fail += 1
-                            warn("[ICE HUB] Erro ", titleText, ": ", err)
-                        end
+                        if ok then success += 1 else fail += 1 end
                         updateStatusText()
                         task.wait(0.8)
                     end
-                    -- Se saiu do loop pela flag, reseta o estado do botão
                     if _G.StopAllICEHUBLoops then
                         isActive = false
                         statusButton.Text = "OFF"

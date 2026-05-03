@@ -1,21 +1,33 @@
--- ICE HUB | Auto Farm & Pro - Toggles estilo "Lucky/YEN/Ability"
+-- ICE HUB | Proteção contra múltiplas execuções + Toggles estilizados + bolha no topo
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Limpeza
-if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
-if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
+-- ==================== PROTEÇÃO CONTRA EXECUÇÕES SIMULTÂNEAS ====================
+-- Sinaliza para qualquer script anterior que ele deve parar imediatamente
+_G.StopAllICEHUBLoops = true
+task.wait(0.15) -- pequeno delay para garantir que os loops antigos detectem a flag
 
--- ==================== BOLHA PRETA (arrastável) ====================
+-- Limpeza total de GUIs anteriores (já existente, mas mantida)
+if playerGui:FindFirstChild("ICEHUB") then
+    playerGui.ICEHUB:Destroy()
+end
+if playerGui:FindFirstChild("ICEBubble") then
+    playerGui.ICEBubble:Destroy()
+end
+
+-- Agora redefine a flag para false, pois este novo script está ativo
+_G.StopAllICEHUBLoops = false
+
+-- ==================== BOLHA PRETA (arrastável, no topo) ====================
 local bubbleGui = Instance.new("ScreenGui")
 bubbleGui.Name = "ICEBubble"
 bubbleGui.Parent = playerGui
 
 local bubble = Instance.new("TextButton")
 bubble.Size = UDim2.new(0, 70, 0, 70)
-bubble.Position = UDim2.new(0.5, -35, 0.4, -35)
+bubble.Position = UDim2.new(0.5, -35, 0, 10) -- centralizada no topo
 bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
 bubble.Text = "ICE"
@@ -208,8 +220,8 @@ task.spawn(function()
     end
 
     local colorIndex = 1
-    while true do
-        if not screenGui or not screenGui.Parent then break end
+    -- Loop principal do arco-íris, agora verifica a flag de parada
+    while screenGui and screenGui.Parent and not _G.StopAllICEHUBLoops do
         if mainStroke then mainStroke.Color = gradient[colorIndex] end
         if bstroke then bstroke.Color = gradient[colorIndex] end
         colorIndex = (colorIndex % #gradient) + 1
@@ -235,7 +247,7 @@ else
         toggleCorner.CornerRadius = UDim.new(0, 6)
         toggleCorner.Parent = toggleFrame
 
-        -- Título (ex: "Style Spins(Bronze 2)")
+        -- Título
         local titleLabel = Instance.new("TextLabel")
         titleLabel.Size = UDim2.new(0.6, 0, 0, 22)
         titleLabel.Position = UDim2.new(0, 10, 0, 2)
@@ -247,7 +259,7 @@ else
         titleLabel.TextXAlignment = Enum.TextXAlignment.Left
         titleLabel.Parent = toggleFrame
 
-        -- Subtítulo (ex: "Touch over either our desktop*")
+        -- Subtítulo
         local subLabel = Instance.new("TextLabel")
         subLabel.Size = UDim2.new(0.6, 0, 0, 16)
         subLabel.Position = UDim2.new(0, 10, 0, 24)
@@ -287,7 +299,8 @@ else
                 statusButton.Text = "ON"
                 statusButton.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
                 loopCoroutine = task.spawn(function()
-                    while isActive do
+                    -- Loop do toggle agora verifica a flag global de parada
+                    while isActive and not _G.StopAllICEHUBLoops do
                         local ok, err = pcall(function()
                             Remote:InvokeServer(code)
                         end)
@@ -299,6 +312,12 @@ else
                         end
                         updateStatusText()
                         task.wait(0.8)
+                    end
+                    -- Se saiu do loop pela flag, reseta o estado do botão
+                    if _G.StopAllICEHUBLoops then
+                        isActive = false
+                        statusButton.Text = "OFF"
+                        statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
                     end
                 end)
                 updateStatusText()

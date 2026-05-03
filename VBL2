@@ -1,4 +1,4 @@
--- ICE HUB | Auto Farm & Pro - Duas abas + bordas arco-íris suaves
+-- ICE HUB | Auto Farm & Pro - Toggles estilo "Lucky/YEN/Ability"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -217,41 +217,75 @@ task.spawn(function()
     end
 end)
 
--- ==================== LÓGICA DOS TOGGLES ====================
+-- ==================== LÓGICA DOS TOGGLES (ESTILO NOVO) ====================
 local Remote = ReplicatedStorage:FindFirstChild("RequestRankedReward", true)
 
 if not Remote then
     title.Text = "⚠ Remote perdido"
     statusLabel.Text = "RequestRankedReward não encontrado"
 else
-    local function createToggle(name, yPos, code, parent)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, 0, 0, 42)
-        btn.Position = UDim2.new(0, 0, 0, yPos)
-        btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.Text = name .. "  ➜  OFF"
-        btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 14
-        btn.Parent = parent
+    local function createToggle(titleText, subtitleText, yPos, code, parent)
+        -- Container do toggle
+        local toggleFrame = Instance.new("Frame")
+        toggleFrame.Size = UDim2.new(1, 0, 0, 42)
+        toggleFrame.Position = UDim2.new(0, 0, 0, yPos)
+        toggleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        toggleFrame.Parent = parent
+        local toggleCorner = Instance.new("UICorner")
+        toggleCorner.CornerRadius = UDim.new(0, 6)
+        toggleCorner.Parent = toggleFrame
 
-        local btnCorner = Instance.new("UICorner")
-        btnCorner.CornerRadius = UDim.new(0, 6)
-        btnCorner.Parent = btn
+        -- Título (ex: "Style Spins(Bronze 2)")
+        local titleLabel = Instance.new("TextLabel")
+        titleLabel.Size = UDim2.new(0.6, 0, 0, 22)
+        titleLabel.Position = UDim2.new(0, 10, 0, 2)
+        titleLabel.BackgroundTransparency = 1
+        titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        titleLabel.Text = titleText
+        titleLabel.Font = Enum.Font.GothamBold
+        titleLabel.TextSize = 14
+        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        titleLabel.Parent = toggleFrame
+
+        -- Subtítulo (ex: "Touch over either our desktop*")
+        local subLabel = Instance.new("TextLabel")
+        subLabel.Size = UDim2.new(0.6, 0, 0, 16)
+        subLabel.Position = UDim2.new(0, 10, 0, 24)
+        subLabel.BackgroundTransparency = 1
+        subLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+        subLabel.Text = subtitleText
+        subLabel.Font = Enum.Font.Gotham
+        subLabel.TextSize = 10
+        subLabel.TextXAlignment = Enum.TextXAlignment.Left
+        subLabel.Parent = toggleFrame
+
+        -- Status OFF/ON
+        local statusButton = Instance.new("TextButton")
+        statusButton.Size = UDim2.new(0, 60, 0, 24)
+        statusButton.Position = UDim2.new(1, -70, 0, 9)
+        statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+        statusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        statusButton.Text = "OFF"
+        statusButton.Font = Enum.Font.GothamBold
+        statusButton.TextSize = 14
+        statusButton.Parent = toggleFrame
+        local statusCorner = Instance.new("UICorner")
+        statusCorner.CornerRadius = UDim.new(0, 4)
+        statusCorner.Parent = statusButton
 
         local isActive = false
         local success, fail = 0, 0
 
         local function updateStatusText()
-            statusLabel.Text = string.format("%s: %d ✓  |  %d ✗", name, success, fail)
+            statusLabel.Text = string.format("%s: %d ✓  |  %d ✗", titleText, success, fail)
         end
 
         local loopCoroutine
-        btn.MouseButton1Click:Connect(function()
+        statusButton.MouseButton1Click:Connect(function()
             isActive = not isActive
             if isActive then
-                btn.Text = name .. "  ➜  ON"
-                btn.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
+                statusButton.Text = "ON"
+                statusButton.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
                 loopCoroutine = task.spawn(function()
                     while isActive do
                         local ok, err = pcall(function()
@@ -261,7 +295,7 @@ else
                             success += 1
                         else
                             fail += 1
-                            warn("[ICE HUB] Erro ", name, ": ", err)
+                            warn("[ICE HUB] Erro ", titleText, ": ", err)
                         end
                         updateStatusText()
                         task.wait(0.8)
@@ -269,8 +303,8 @@ else
                 end)
                 updateStatusText()
             else
-                btn.Text = name .. "  ➜  OFF"
-                btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+                statusButton.Text = "OFF"
+                statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
                 isActive = false
                 success, fail = 0, 0
                 statusLabel.Text = "Pronto para iniciar"
@@ -278,15 +312,15 @@ else
         end)
     end
 
-    -- Aba Farm (código 1 na primeira opção)
-    createToggle("Auto Lucky Spins", 0, 1, tabFarmContainer)   -- ALTERADO: 7 → 1
-    createToggle("Auto Yen", 48, 2, tabFarmContainer)
-    createToggle("Auto Lucky Habilits", 96, 4, tabFarmContainer)
+    -- Aba Farm
+    createToggle("Style Spins(Bronze 2)", "Touch over either our desktop*", 0, 1, tabFarmContainer)
+    createToggle("Farm Yen(Bronze 3)", "Touch over either our desktop*", 48, 2, tabFarmContainer)
+    createToggle("Habilits Spins(Prata 2)", "Touch over either our desktop*", 96, 4, tabFarmContainer)
 
     -- Aba Pro
-    createToggle("Style Pro", 0, 7, tabProContainer)
-    createToggle("Yen Pro", 48, 10, tabProContainer)
-    createToggle("Habilits Pro", 96, 8, tabProContainer)
+    createToggle("Style Spins Pro(Ouro 2)", "Touch over either our desktop*", 0, 7, tabProContainer)
+    createToggle("Yen Farm Pro(Diamante 2)", "Touch over either our desktop*", 48, 10, tabProContainer)
+    createToggle("Habilits Spins(diamante 3)", "Touch over either our desktop*", 96, 8, tabProContainer)
 end
 
 -- ==================== FECHAR / BOLHA ====================

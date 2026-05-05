@@ -1,83 +1,93 @@
--- ICE HUB | Mensagem arco-íris + Toggles estilizados + bolha no topo + proteção contra múltiplas execuções
+-- ICE HUB | Nomes Originais + Intro + Blur
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- ==================== PROTEÇÃO CONTRA EXECUÇÕES SIMULTÂNEAS ====================
+-- ==================== PROTEÇÃO E LIMPEZA ====================
 _G.StopAllICEHUBLoops = true
-task.wait(0.15)
+task.wait(0.1)
 
 if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
 if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
+if playerGui:FindFirstChild("ICELoading") then playerGui.ICELoading:Destroy() end
+if playerGui:FindFirstChild("ICEBanner") then playerGui.ICEBanner:Destroy() end
+if Lighting:FindFirstChild("ICEBlur") then Lighting.ICEBlur:Destroy() end
 
 _G.StopAllICEHUBLoops = false
 
--- ==================== MENSAGEM ARCO-ÍRIS (CRIADO POR LORENZO) ====================
-local bannerGui = Instance.new("ScreenGui", playerGui)
-bannerGui.Name = "ICEBanner"
+-- ==================== EFEITO DE DESFOQUE (BLUR) ====================
+local blur = Instance.new("BlurEffect")
+blur.Name = "ICEBlur"
+blur.Size = 0
+blur.Parent = Lighting
 
-local bannerLabel = Instance.new("TextLabel", bannerGui)
-bannerLabel.Size = UDim2.new(0.8, 0, 0, 30)
-bannerLabel.Position = UDim2.new(0.1, 0, 0, 0) -- centralizado horizontalmente e colado no topo
-bannerLabel.BackgroundTransparency = 1
-bannerLabel.Font = Enum.Font.GothamBold
-bannerLabel.TextSize = 16
-bannerLabel.Text = "Script Criado Por Lorenzo | tiktok lrxvbl"
-bannerLabel.TextColor3 = Color3.new(1, 1, 1) -- será alterado pelo arco-íris
+-- ==================== GUI DE CARREGAMENTO ====================
+local loadingGui = Instance.new("ScreenGui", playerGui)
+loadingGui.Name = "ICELoading"
+loadingGui.DisplayOrder = 1000
 
--- ==================== BOLHA PRETA (arrastável, no topo) ====================
-local bubbleGui = Instance.new("ScreenGui")
-bubbleGui.Name = "ICEBubble"
-bubbleGui.Parent = playerGui
+local loadCard = Instance.new("Frame", loadingGui)
+loadCard.Size = UDim2.new(0, 220, 0, 120)
+loadCard.Position = UDim2.new(0.5, 0, 0.5, 0)
+loadCard.AnchorPoint = Vector2.new(0.5, 0.5)
+loadCard.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+loadCard.BorderSizePixel = 0
+Instance.new("UICorner", loadCard).CornerRadius = UDim.new(0, 12)
 
-local bubble = Instance.new("TextButton")
-bubble.Size = UDim2.new(0, 70, 0, 70)
-bubble.Position = UDim2.new(0.5, -35, 0, 10) -- ajustada para ficar abaixo da mensagem (a mensagem ocupa 30px de altura)
-bubble.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-bubble.TextColor3 = Color3.fromRGB(255, 255, 255)
-bubble.Text = "ICE"
-bubble.Font = Enum.Font.GothamBold
-bubble.TextSize = 24
-bubble.Visible = false
-bubble.Active = true
-bubble.Draggable = true
-bubble.Parent = bubbleGui
+local iceTitle = Instance.new("TextLabel", loadCard)
+iceTitle.Size = UDim2.new(1, 0, 0, 40)
+iceTitle.Position = UDim2.new(0, 0, 0.15, 0)
+iceTitle.BackgroundTransparency = 1
+iceTitle.Text = "❄️ ICE HUB"
+iceTitle.Font = Enum.Font.GothamBold
+iceTitle.TextSize = 22
+iceTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-local bcorner = Instance.new("UICorner", bubble)
-bcorner.CornerRadius = UDim.new(1, 0)
+local statusMsg = Instance.new("TextLabel", loadCard)
+statusMsg.Size = UDim2.new(1, 0, 0, 20)
+statusMsg.Position = UDim2.new(0, 0, 0.5, 0)
+statusMsg.BackgroundTransparency = 1
+statusMsg.Text = "Iniciando o Ice hub..."
+statusMsg.Font = Enum.Font.Gotham
+statusMsg.TextSize = 13
+statusMsg.TextColor3 = Color3.fromRGB(180, 180, 180)
 
-local bstroke = Instance.new("UIStroke", bubble)
-bstroke.Color = Color3.fromRGB(255, 255, 255)
-bstroke.Thickness = 2
+local barBg = Instance.new("Frame", loadCard)
+barBg.Size = UDim2.new(0.8, 0, 0, 4)
+barBg.Position = UDim2.new(0.1, 0, 0.75, 0)
+barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+barBg.BorderSizePixel = 0
+Instance.new("UICorner", barBg)
+
+local barFill = Instance.new("Frame", barBg)
+barFill.Size = UDim2.new(0, 0, 1, 0)
+barFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+barFill.BorderSizePixel = 0
+Instance.new("UICorner", barFill)
 
 -- ==================== GUI PRINCIPAL ====================
-local screenGui = Instance.new("ScreenGui")
+local screenGui = Instance.new("ScreenGui", playerGui)
 screenGui.Name = "ICEHUB"
-screenGui.Parent = playerGui
+screenGui.Enabled = false 
 
-local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 300)
-main.Position = UDim2.new(0.5, -130, 0.5, -150)
+local main = Instance.new("Frame", screenGui)
+main.Size = UDim2.new(0, 280, 0, 300) -- Aumentei a largura em 20px para caber os nomes inteiros confortavelmente
+main.Position = UDim2.new(0.5, -140, 0.5, -150)
 main.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
-main.Parent = screenGui
-
-local mainCorner = Instance.new("UICorner", main)
-mainCorner.CornerRadius = UDim.new(0, 8)
-
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 8)
 local mainStroke = Instance.new("UIStroke", main)
 mainStroke.Thickness = 2
 
--- Título (agora a mensagem arco-íris fica separada; mantemos o título original "ICE HUB")
 local titleBar = Instance.new("Frame", main)
 titleBar.Size = UDim2.new(1, 0, 0, 36)
 titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-
-local titleCorner = Instance.new("UICorner", titleBar)
-titleCorner.CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 8)
 
 local title = Instance.new("TextLabel", titleBar)
 title.Size = UDim2.new(1, -40, 1, 0)
@@ -89,20 +99,14 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Botão fechar
 local closeBtn = Instance.new("TextButton", titleBar)
 closeBtn.Size = UDim2.new(0, 22, 0, 22)
 closeBtn.Position = UDim2.new(1, -28, 0, 7)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Text = "✕"
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 14
+closeBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 4)
 
-local closeCorner = Instance.new("UICorner", closeBtn)
-closeCorner.CornerRadius = UDim.new(0, 4)
-
--- Barra de abas e containers (mantidos iguais)
 local tabBar = Instance.new("Frame", main)
 tabBar.Size = UDim2.new(1, -20, 0, 34)
 tabBar.Position = UDim2.new(0, 10, 0, 42)
@@ -110,29 +114,25 @@ tabBar.BackgroundTransparency = 1
 
 local tabFarmBtn = Instance.new("TextButton", tabBar)
 tabFarmBtn.Size = UDim2.new(0.5, -3, 1, -4)
-tabFarmBtn.Position = UDim2.new(0, 0, 0, 2)
 tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-tabFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 tabFarmBtn.Text = "Farm"
+tabFarmBtn.TextColor3 = Color3.new(1,1,1)
 tabFarmBtn.Font = Enum.Font.GothamBold
-tabFarmBtn.TextSize = 14
 Instance.new("UICorner", tabFarmBtn).CornerRadius = UDim.new(0, 6)
 
 local tabProBtn = Instance.new("TextButton", tabBar)
 tabProBtn.Size = UDim2.new(0.5, -3, 1, -4)
-tabProBtn.Position = UDim2.new(0.5, 3, 0, 2)
+tabProBtn.Position = UDim2.new(0.5, 3, 0, 0)
 tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-tabProBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
 tabProBtn.Text = "Pro"
+tabProBtn.TextColor3 = Color3.fromRGB(180,180,180)
 tabProBtn.Font = Enum.Font.GothamBold
-tabProBtn.TextSize = 14
 Instance.new("UICorner", tabProBtn).CornerRadius = UDim.new(0, 6)
 
 local tabFarmContainer = Instance.new("Frame", main)
 tabFarmContainer.Size = UDim2.new(1, -20, 1, -130)
 tabFarmContainer.Position = UDim2.new(0, 10, 0, 82)
 tabFarmContainer.BackgroundTransparency = 1
-tabFarmContainer.Visible = true
 
 local tabProContainer = Instance.new("Frame", main)
 tabProContainer.Size = UDim2.new(1, -20, 1, -130)
@@ -140,182 +140,155 @@ tabProContainer.Position = UDim2.new(0, 10, 0, 82)
 tabProContainer.BackgroundTransparency = 1
 tabProContainer.Visible = false
 
-local function switchTab(tab)
-    if tab == "Farm" then
-        tabFarmContainer.Visible = true
-        tabProContainer.Visible = false
-        tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-        tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        tabFarmBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tabProBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-    else
-        tabFarmContainer.Visible = false
-        tabProContainer.Visible = true
-        tabProBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-        tabFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        tabProBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        tabFarmBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-    end
-end
-
-tabFarmBtn.MouseButton1Click:Connect(function() switchTab("Farm") end)
-tabProBtn.MouseButton1Click:Connect(function() switchTab("Pro") end)
-
 local statusLabel = Instance.new("TextLabel", main)
 statusLabel.Size = UDim2.new(1, -24, 0, 30)
 statusLabel.Position = UDim2.new(0, 12, 1, -35)
 statusLabel.BackgroundTransparency = 1
 statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-statusLabel.Text = "Pronto para iniciar"
+statusLabel.Text = "Aguardando..."
 statusLabel.Font = Enum.Font.Gotham
 statusLabel.TextSize = 12
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- ==================== EFEITO ARCO-ÍRIS SUAVE (BORDAS + TEXTO) ====================
-local rainbowColors = {
-    Color3.fromRGB(255, 0, 0),
-    Color3.fromRGB(255, 127, 0),
-    Color3.fromRGB(255, 255, 0),
-    Color3.fromRGB(0, 255, 0),
-    Color3.fromRGB(0, 0, 255),
-    Color3.fromRGB(75, 0, 130),
-    Color3.fromRGB(143, 0, 255)
-}
-
-local function lerpColor(a, b, t)
-    return Color3.new(
-        a.R + (b.R - a.R) * t,
-        a.G + (b.G - a.G) * t,
-        a.B + (b.B - a.B) * t
-    )
-end
-
-task.spawn(function()
-    local gradient = {}
-    local steps = 50
-    for i = 1, #rainbowColors do
-        local current = rainbowColors[i]
-        local nextColor = rainbowColors[(i % #rainbowColors) + 1]
-        for j = 0, steps - 1 do
-            local t = j / steps
-            table.insert(gradient, lerpColor(current, nextColor, t))
-        end
-    end
-
-    local colorIndex = 1
-    while screenGui and screenGui.Parent and not _G.StopAllICEHUBLoops do
-        local c = gradient[colorIndex]
-        if mainStroke then mainStroke.Color = c end
-        if bstroke then bstroke.Color = c end
-        if bannerLabel then bannerLabel.TextColor3 = c end -- aplica a cor do arco-íris ao texto
-        colorIndex = (colorIndex % #gradient) + 1
-        task.wait(0.03)
-    end
+tabFarmBtn.MouseButton1Click:Connect(function()
+    tabFarmContainer.Visible = true
+    tabProContainer.Visible = false
+    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 end)
 
--- ==================== LÓGICA DOS TOGGLES (ESTILO NOVO) ====================
+tabProBtn.MouseButton1Click:Connect(function()
+    tabFarmContainer.Visible = false
+    tabProContainer.Visible = true
+    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    tabProBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+end)
+
+-- ==================== TOGGLES COM NOMES ORIGINAIS ====================
 local Remote = ReplicatedStorage:FindFirstChild("RequestRankedReward", true)
 
-if not Remote then
-    title.Text = "⚠ Remote perdido"
-    statusLabel.Text = "RequestRankedReward não encontrado"
-else
-    local function createToggle(titleText, subtitleText, yPos, code, parent)
-        local toggleFrame = Instance.new("Frame", parent)
-        toggleFrame.Size = UDim2.new(1, 0, 0, 42)
-        toggleFrame.Position = UDim2.new(0, 0, 0, yPos)
-        toggleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        local toggleCorner = Instance.new("UICorner", toggleFrame)
-        toggleCorner.CornerRadius = UDim.new(0, 6)
+local function createToggle(titleText, yPos, code, parent)
+    local frame = Instance.new("Frame", parent)
+    frame.Size = UDim2.new(1, 0, 0, 42)
+    frame.Position = UDim2.new(0, 0, 0, yPos)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
 
-        local titleLabel = Instance.new("TextLabel", toggleFrame)
-        titleLabel.Size = UDim2.new(0.6, 0, 0, 22)
-        titleLabel.Position = UDim2.new(0, 10, 0, 2)
-        titleLabel.BackgroundTransparency = 1
-        titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        titleLabel.Text = titleText
-        titleLabel.Font = Enum.Font.GothamBold
-        titleLabel.TextSize = 14
-        titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    local tl = Instance.new("TextLabel", frame)
+    tl.Size = UDim2.new(0.75, 0, 1, 0) -- Mais espaço horizontal para o texto completo
+    tl.Position = UDim2.new(0, 10, 0, 0)
+    tl.BackgroundTransparency = 1
+    tl.Text = titleText
+    tl.TextColor3 = Color3.new(1,1,1)
+    tl.Font = Enum.Font.GothamBold
+    tl.TextSize = 13 -- Mantive um tamanho legível
+    tl.TextXAlignment = Enum.TextXAlignment.Left
 
-        local subLabel = Instance.new("TextLabel", toggleFrame)
-        subLabel.Size = UDim2.new(0.6, 0, 0, 16)
-        subLabel.Position = UDim2.new(0, 10, 0, 24)
-        subLabel.BackgroundTransparency = 1
-        subLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
-        subLabel.Text = subtitleText
-        subLabel.Font = Enum.Font.Gotham
-        subLabel.TextSize = 10
-        subLabel.TextXAlignment = Enum.TextXAlignment.Left
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0, 55, 0, 24)
+    btn.Position = UDim2.new(1, -62, 0.5, -12)
+    btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+    btn.Text = "OFF"
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
 
-        local statusButton = Instance.new("TextButton", toggleFrame)
-        statusButton.Size = UDim2.new(0, 60, 0, 24)
-        statusButton.Position = UDim2.new(1, -70, 0, 9)
-        statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
-        statusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        statusButton.Text = "OFF"
-        statusButton.Font = Enum.Font.GothamBold
-        statusButton.TextSize = 14
-        local statusCorner = Instance.new("UICorner", statusButton)
-        statusCorner.CornerRadius = UDim.new(0, 4)
-
-        local isActive = false
-        local success, fail = 0, 0
-
-        local function updateStatusText()
-            statusLabel.Text = string.format("%s: %d ✓  |  %d ✗", titleText, success, fail)
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        btn.Text = active and "ON" or "OFF"
+        btn.BackgroundColor3 = active and Color3.fromRGB(50, 160, 70) or Color3.fromRGB(180, 50, 50)
+        
+        if active then
+            task.spawn(function()
+                while active and not _G.StopAllICEHUBLoops do
+                    if Remote then 
+                        pcall(function() Remote:InvokeServer(code) end)
+                    end
+                    task.wait(0.8)
+                end
+            end)
         end
-
-        local loopCoroutine
-        statusButton.MouseButton1Click:Connect(function()
-            isActive = not isActive
-            if isActive then
-                statusButton.Text = "ON"
-                statusButton.BackgroundColor3 = Color3.fromRGB(50, 160, 70)
-                loopCoroutine = task.spawn(function()
-                    while isActive and not _G.StopAllICEHUBLoops do
-                        local ok, err = pcall(function()
-                            Remote:InvokeServer(code)
-                        end)
-                        if ok then success += 1 else fail += 1 end
-                        updateStatusText()
-                        task.wait(0.8)
-                    end
-                    if _G.StopAllICEHUBLoops then
-                        isActive = false
-                        statusButton.Text = "OFF"
-                        statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
-                    end
-                end)
-                updateStatusText()
-            else
-                statusButton.Text = "OFF"
-                statusButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
-                isActive = false
-                success, fail = 0, 0
-                statusLabel.Text = "Pronto para iniciar"
-            end
-        end)
-    end
-
-    -- Aba Farm
-    createToggle("Style Spins(Bronze 2)", "Touch over either our desktop*", 0, 1, tabFarmContainer)
-    createToggle("Farm Yen(Bronze 3)", "Touch over either our desktop*", 48, 2, tabFarmContainer)
-    createToggle("Habilits Spins(Prata 2)", "Touch over either our desktop*", 96, 4, tabFarmContainer)
-
-    -- Aba Pro
-    createToggle("Style Spins Pro(Ouro 2)", "Touch over either our desktop*", 0, 7, tabProContainer)
-    createToggle("Yen Farm Pro(Diamante 2)", "Touch over either our desktop*", 48, 10, tabProContainer)
-    createToggle("Habilits Spins(diamante 3)", "Touch over either our desktop*", 96, 8, tabProContainer)
+    end)
 end
 
--- ==================== FECHAR / BOLHA ====================
-closeBtn.MouseButton1Click:Connect(function()
-    main.Visible = false
-    bubble.Visible = true
+-- Restaurando os nomes exatamente como você pediu
+createToggle("Style Spins(Bronze 2)", 0, 1, tabFarmContainer)
+createToggle("Farm Yen(Bronze 3)", 48, 2, tabFarmContainer)
+createToggle("Habilits Spins(Prata 2)", 96, 4, tabFarmContainer)
+
+createToggle("Style Spins Pro(Ouro 2)", 0, 7, tabProContainer)
+createToggle("Yen Farm Pro(Diamante 2)", 48, 10, tabProContainer)
+createToggle("Habilits Spins(Diamante 3)", 96, 8, tabProContainer)
+
+-- ==================== BANNER E BOLHA ====================
+local bannerGui = Instance.new("ScreenGui", playerGui)
+bannerGui.Name = "ICEBanner"
+bannerGui.Enabled = false
+
+local bannerLabel = Instance.new("TextLabel", bannerGui)
+bannerLabel.Size = UDim2.new(0.8, 0, 0, 30)
+bannerLabel.Position = UDim2.new(0.1, 0, 0, 0)
+bannerLabel.BackgroundTransparency = 1
+bannerLabel.Text = "Script Criado Por Lorenzo | tiktok lrxvbl"
+bannerLabel.Font = Enum.Font.GothamBold
+bannerLabel.TextSize = 15
+
+local bubbleGui = Instance.new("ScreenGui", playerGui)
+bubbleGui.Name = "ICEBubble"
+local bubble = Instance.new("TextButton", bubbleGui)
+bubble.Size = UDim2.new(0, 60, 0, 60)
+bubble.Position = UDim2.new(0.5, -30, 0, 15)
+bubble.BackgroundColor3 = Color3.fromRGB(15,15,15)
+bubble.Text = "ICE"
+bubble.TextColor3 = Color3.new(1,1,1)
+bubble.Font = Enum.Font.GothamBold
+bubble.Visible = false
+bubble.Draggable = true
+Instance.new("UICorner", bubble).CornerRadius = UDim.new(1,0)
+local bstroke = Instance.new("UIStroke", bubble)
+bstroke.Thickness = 2
+
+closeBtn.MouseButton1Click:Connect(function() main.Visible = false; bubble.Visible = true end)
+bubble.MouseButton1Click:Connect(function() main.Visible = true; bubble.Visible = false end)
+
+task.spawn(function()
+    local h = 0
+    while task.wait(0.03) and not _G.StopAllICEHUBLoops do
+        h = (h + 0.01) % 1
+        local c = Color3.fromHSV(h, 0.7, 1)
+        if mainStroke then mainStroke.Color = c end
+        if bstroke then bstroke.Color = c end
+        if bannerLabel then bannerLabel.TextColor3 = c end
+    end
 end)
 
-bubble.MouseButton1Click:Connect(function()
-    main.Visible = true
-    bubble.Visible = false
+-- ==================== EXECUÇÃO DA ANIMAÇÃO ====================
+task.spawn(function()
+    -- Começa o Blur
+    TweenService:Create(blur, TweenInfo.new(0.6), {Size = 20}):Play()
+    
+    -- Enche a barra com os parâmetros corretos
+    local fillInfo = TweenInfo.new(3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+    local fill = TweenService:Create(barFill, fillInfo, {Size = UDim2.new(1, 0, 1, 0)})
+    fill:Play()
+    fill.Completed:Wait() 
+    
+    task.wait(0.3)
+    
+    -- Some o Loading e o Blur com os parâmetros corrigidos
+    TweenService:Create(blur, TweenInfo.new(0.5), {Size = 0}):Play()
+    local exitInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local exit = TweenService:Create(loadCard, exitInfo, {Size = UDim2.new(0,0,0,0)})
+    exit:Play()
+    exit.Completed:Wait()
+    
+    -- Destrói a tela de carregamento
+    loadingGui:Destroy()
+    blur:Destroy()
+    
+    -- Ativa a GUI principal
+    screenGui.Enabled = true
+    bannerGui.Enabled = true
+    statusLabel.Text = "Pronto para iniciar"
 end)

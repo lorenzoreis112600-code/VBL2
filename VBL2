@@ -1,4 +1,4 @@
--- ICE HUB | Nomes Originais + Intro + Blur
+-- ICE HUB | Nomes Originais + Splash "Made By lrxvbl" + Blur
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -12,7 +12,7 @@ task.wait(0.1)
 
 if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
 if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
-if playerGui:FindFirstChild("ICELoading") then playerGui.ICELoading:Destroy() end
+if playerGui:FindFirstChild("ICESplash") then playerGui.ICESplash:Destroy() end
 if playerGui:FindFirstChild("ICEBanner") then playerGui.ICEBanner:Destroy() end
 if Lighting:FindFirstChild("ICEBlur") then Lighting.ICEBlur:Destroy() end
 
@@ -24,49 +24,27 @@ blur.Name = "ICEBlur"
 blur.Size = 0
 blur.Parent = Lighting
 
--- ==================== GUI DE CARREGAMENTO ====================
-local loadingGui = Instance.new("ScreenGui", playerGui)
-loadingGui.Name = "ICELoading"
-loadingGui.DisplayOrder = 1000
+-- ==================== TELA DE SPLASH (Made By lrxvbl) ====================
+local splashGui = Instance.new("ScreenGui", playerGui)
+splashGui.Name = "ICESplash"
+splashGui.DisplayOrder = 1000
+splashGui.Enabled = true
 
-local loadCard = Instance.new("Frame", loadingGui)
-loadCard.Size = UDim2.new(0, 220, 0, 120)
-loadCard.Position = UDim2.new(0.5, 0, 0.5, 0)
-loadCard.AnchorPoint = Vector2.new(0.5, 0.5)
-loadCard.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-loadCard.BorderSizePixel = 0
-Instance.new("UICorner", loadCard).CornerRadius = UDim.new(0, 12)
+local splashFrame = Instance.new("Frame", splashGui)
+splashFrame.Size = UDim2.new(0, 300, 0, 80)
+splashFrame.Position = UDim2.new(0.5, -150, 0.5, -40)
+splashFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+splashFrame.BorderSizePixel = 0
+splashFrame.BackgroundTransparency = 0.2
+Instance.new("UICorner", splashFrame).CornerRadius = UDim.new(0, 12)
 
-local iceTitle = Instance.new("TextLabel", loadCard)
-iceTitle.Size = UDim2.new(1, 0, 0, 40)
-iceTitle.Position = UDim2.new(0, 0, 0.15, 0)
-iceTitle.BackgroundTransparency = 1
-iceTitle.Text = "❄️ ICE HUB"
-iceTitle.Font = Enum.Font.GothamBold
-iceTitle.TextSize = 22
-iceTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local statusMsg = Instance.new("TextLabel", loadCard)
-statusMsg.Size = UDim2.new(1, 0, 0, 20)
-statusMsg.Position = UDim2.new(0, 0, 0.5, 0)
-statusMsg.BackgroundTransparency = 1
-statusMsg.Text = "Iniciando o Ice hub..."
-statusMsg.Font = Enum.Font.Gotham
-statusMsg.TextSize = 13
-statusMsg.TextColor3 = Color3.fromRGB(180, 180, 180)
-
-local barBg = Instance.new("Frame", loadCard)
-barBg.Size = UDim2.new(0.8, 0, 0, 4)
-barBg.Position = UDim2.new(0.1, 0, 0.75, 0)
-barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-barBg.BorderSizePixel = 0
-Instance.new("UICorner", barBg)
-
-local barFill = Instance.new("Frame", barBg)
-barFill.Size = UDim2.new(0, 0, 1, 0)
-barFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-barFill.BorderSizePixel = 0
-Instance.new("UICorner", barFill)
+local splashText = Instance.new("TextLabel", splashFrame)
+splashText.Size = UDim2.new(1, 0, 1, 0)
+splashText.BackgroundTransparency = 1
+splashText.Text = "❄️ Made By lrxvbl"
+splashText.Font = Enum.Font.GothamBold
+splashText.TextSize = 26
+splashText.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 -- ==================== GUI PRINCIPAL ====================
 local screenGui = Instance.new("ScreenGui", playerGui)
@@ -74,7 +52,7 @@ screenGui.Name = "ICEHUB"
 screenGui.Enabled = false 
 
 local main = Instance.new("Frame", screenGui)
-main.Size = UDim2.new(0, 280, 0, 300) -- Aumentei a largura em 20px para caber os nomes inteiros confortavelmente
+main.Size = UDim2.new(0, 280, 0, 300)
 main.Position = UDim2.new(0.5, -140, 0.5, -150)
 main.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
 main.BorderSizePixel = 0
@@ -175,13 +153,13 @@ local function createToggle(titleText, yPos, code, parent)
     Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
 
     local tl = Instance.new("TextLabel", frame)
-    tl.Size = UDim2.new(0.75, 0, 1, 0) -- Mais espaço horizontal para o texto completo
+    tl.Size = UDim2.new(0.75, 0, 1, 0)
     tl.Position = UDim2.new(0, 10, 0, 0)
     tl.BackgroundTransparency = 1
     tl.Text = titleText
     tl.TextColor3 = Color3.new(1,1,1)
     tl.Font = Enum.Font.GothamBold
-    tl.TextSize = 13 -- Mantive um tamanho legível
+    tl.TextSize = 13
     tl.TextXAlignment = Enum.TextXAlignment.Left
 
     local btn = Instance.new("TextButton", frame)
@@ -212,7 +190,6 @@ local function createToggle(titleText, yPos, code, parent)
     end)
 end
 
--- Restaurando os nomes exatamente como você pediu
 createToggle("Style Spins(Bronze 2)", 0, 1, tabFarmContainer)
 createToggle("Farm Yen(Bronze 3)", 48, 2, tabFarmContainer)
 createToggle("Habilits Spins(Prata 2)", 96, 4, tabFarmContainer)
@@ -263,31 +240,25 @@ task.spawn(function()
     end
 end)
 
--- ==================== EXECUÇÃO DA ANIMAÇÃO ====================
+-- ==================== EXECUÇÃO DA ANIMAÇÃO (Splash + Blur) ====================
 task.spawn(function()
-    -- Começa o Blur
+    -- Ativa o blur e mostra o splash "Made By lrxvbl"
     TweenService:Create(blur, TweenInfo.new(0.6), {Size = 20}):Play()
     
-    -- Enche a barra com os parâmetros corretos
-    local fillInfo = TweenInfo.new(3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-    local fill = TweenService:Create(barFill, fillInfo, {Size = UDim2.new(1, 0, 1, 0)})
-    fill:Play()
-    fill.Completed:Wait() 
+    -- Aguarda 3 segundos com a tela embaçada
+    task.wait(3)
     
-    task.wait(0.3)
-    
-    -- Some o Loading e o Blur com os parâmetros corrigidos
+    -- Fade out: blur e splash somem juntos
     TweenService:Create(blur, TweenInfo.new(0.5), {Size = 0}):Play()
-    local exitInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-    local exit = TweenService:Create(loadCard, exitInfo, {Size = UDim2.new(0,0,0,0)})
-    exit:Play()
-    exit.Completed:Wait()
+    local fadeOut = TweenService:Create(splashFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1})
+    fadeOut:Play()
+    fadeOut.Completed:Wait()
     
-    -- Destrói a tela de carregamento
-    loadingGui:Destroy()
+    -- Limpa o splash e o blur
+    splashGui:Destroy()
     blur:Destroy()
     
-    -- Ativa a GUI principal
+    -- Ativa a GUI principal e o banner
     screenGui.Enabled = true
     bannerGui.Enabled = true
     statusLabel.Text = "Pronto para iniciar"

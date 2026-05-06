@@ -1,4 +1,6 @@
--- ICE HUB | Nomes Originais + Splash "Made By lrxvbl" + Blur
+-- GALAXY HUB | Versão Super Bolha (100x100)
+-- MADE BY lrxvbl
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
@@ -6,183 +8,171 @@ local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- ==================== PROTEÇÃO E LIMPEZA ====================
-_G.StopAllICEHUBLoops = true
+-- ==================== LIMPEZA E PROTEÇÃO ====================
+_G.StopAllGALAXYHUBLoops = true
 task.wait(0.1)
 
-if playerGui:FindFirstChild("ICEHUB") then playerGui.ICEHUB:Destroy() end
-if playerGui:FindFirstChild("ICEBubble") then playerGui.ICEBubble:Destroy() end
-if playerGui:FindFirstChild("ICESplash") then playerGui.ICESplash:Destroy() end
-if playerGui:FindFirstChild("ICEBanner") then playerGui.ICEBanner:Destroy() end
-if Lighting:FindFirstChild("ICEBlur") then Lighting.ICEBlur:Destroy() end
+local function clear(name)
+    local found = playerGui:FindFirstChild(name) or Lighting:FindFirstChild(name)
+    if found then found:Destroy() end
+end
 
-_G.StopAllICEHUBLoops = false
+clear("GalaxyHub"); clear("GalaxyBubble"); clear("GalaxySplash"); clear("GalaxyBlur")
+_G.StopAllGALAXYHUBLoops = false
 
--- ==================== EFEITO DE DESFOQUE (BLUR) ====================
+-- ==================== EFEITO DE ENTRADA (BLUR) ====================
 local blur = Instance.new("BlurEffect")
-blur.Name = "ICEBlur"
+blur.Name = "GalaxyBlur"
 blur.Size = 0
 blur.Parent = Lighting
 
--- ==================== TELA DE SPLASH (Made By lrxvbl) ====================
+-- ==================== SPLASH SCREEN ====================
 local splashGui = Instance.new("ScreenGui", playerGui)
-splashGui.Name = "ICESplash"
-splashGui.DisplayOrder = 1000
-splashGui.Enabled = true
+splashGui.Name = "GalaxySplash"
 
 local splashFrame = Instance.new("Frame", splashGui)
-splashFrame.Size = UDim2.new(0, 300, 0, 80)
-splashFrame.Position = UDim2.new(0.5, -150, 0.5, -40)
-splashFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-splashFrame.BorderSizePixel = 0
+splashFrame.Size = UDim2.new(0, 320, 0, 100)
+splashFrame.Position = UDim2.new(0.5, -160, 0.5, -50)
+splashFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 15)
 splashFrame.BackgroundTransparency = 0.2
-Instance.new("UICorner", splashFrame).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", splashFrame).CornerRadius = UDim.new(0, 20)
 
 local splashText = Instance.new("TextLabel", splashFrame)
 splashText.Size = UDim2.new(1, 0, 1, 0)
 splashText.BackgroundTransparency = 1
-splashText.Text = "❄️ Made By lrxvbl"
+splashText.Text = "✨ Made By lrxvbl"
 splashText.Font = Enum.Font.GothamBold
-splashText.TextSize = 26
-splashText.TextColor3 = Color3.fromRGB(255, 255, 255)
+splashText.TextSize = 28
+splashText.TextColor3 = Color3.fromRGB(200, 160, 255)
 
 -- ==================== GUI PRINCIPAL ====================
 local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "ICEHUB"
+screenGui.Name = "GalaxyHub"
 screenGui.Enabled = false 
 
 local main = Instance.new("Frame", screenGui)
-main.Size = UDim2.new(0, 280, 0, 300)
-main.Position = UDim2.new(0.5, -140, 0.5, -150)
-main.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+main.Size = UDim2.new(0, 300, 0, 350)
+main.Position = UDim2.new(0.5, -150, 0.5, -175)
+main.BackgroundColor3 = Color3.fromRGB(8, 8, 20)
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
 local mainStroke = Instance.new("UIStroke", main)
 mainStroke.Thickness = 2
+mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
+-- BARRA DE TÍTULO
 local titleBar = Instance.new("Frame", main)
-titleBar.Size = UDim2.new(1, 0, 0, 36)
-titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 8)
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
+Instance.new("UICorner", titleBar).CornerRadius = UDim.new(0, 12)
 
 local title = Instance.new("TextLabel", titleBar)
 title.Size = UDim2.new(1, -40, 1, 0)
 title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(220, 220, 220)
-title.Text = "❄️ ICE HUB"
+title.Text = "🌌 GALAXY HUB"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+title.TextSize = 16
 title.TextXAlignment = Enum.TextXAlignment.Left
 
 local closeBtn = Instance.new("TextButton", titleBar)
-closeBtn.Size = UDim2.new(0, 22, 0, 22)
-closeBtn.Position = UDim2.new(1, -28, 0, 7)
-closeBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+closeBtn.Size = UDim2.new(0, 26, 0, 26)
+closeBtn.Position = UDim2.new(1, -34, 0, 7)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 closeBtn.Text = "✕"
 closeBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 4)
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
 
+-- SISTEMA DE ABAS
 local tabBar = Instance.new("Frame", main)
-tabBar.Size = UDim2.new(1, -20, 0, 34)
-tabBar.Position = UDim2.new(0, 10, 0, 42)
+tabBar.Size = UDim2.new(1, -20, 0, 36)
+tabBar.Position = UDim2.new(0, 10, 0, 48)
 tabBar.BackgroundTransparency = 1
 
-local tabFarmBtn = Instance.new("TextButton", tabBar)
-tabFarmBtn.Size = UDim2.new(0.5, -3, 1, -4)
-tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-tabFarmBtn.Text = "Farm"
-tabFarmBtn.TextColor3 = Color3.new(1,1,1)
-tabFarmBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", tabFarmBtn).CornerRadius = UDim.new(0, 6)
+local function createTabBtn(text, pos)
+    local btn = Instance.new("TextButton", tabBar)
+    btn.Size = UDim2.new(0.5, -3, 1, 0)
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
 
-local tabProBtn = Instance.new("TextButton", tabBar)
-tabProBtn.Size = UDim2.new(0.5, -3, 1, -4)
-tabProBtn.Position = UDim2.new(0.5, 3, 0, 0)
-tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-tabProBtn.Text = "Pro"
-tabProBtn.TextColor3 = Color3.fromRGB(180,180,180)
-tabProBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", tabProBtn).CornerRadius = UDim.new(0, 6)
+local tabFarmBtn = createTabBtn("Farm", UDim2.new(0, 0, 0, 0))
+local tabProBtn = createTabBtn("Pro", UDim2.new(0.5, 3, 0, 0))
 
+-- CONTENT CONTAINERS
 local tabFarmContainer = Instance.new("Frame", main)
-tabFarmContainer.Size = UDim2.new(1, -20, 1, -130)
-tabFarmContainer.Position = UDim2.new(0, 10, 0, 82)
+tabFarmContainer.Size = UDim2.new(1, -20, 1, -135)
+tabFarmContainer.Position = UDim2.new(0, 10, 0, 95)
 tabFarmContainer.BackgroundTransparency = 1
 
 local tabProContainer = Instance.new("Frame", main)
-tabProContainer.Size = UDim2.new(1, -20, 1, -130)
-tabProContainer.Position = UDim2.new(0, 10, 0, 82)
+tabProContainer.Size = UDim2.new(1, -20, 1, -135)
+tabProContainer.Position = UDim2.new(0, 10, 0, 95)
 tabProContainer.BackgroundTransparency = 1
 tabProContainer.Visible = false
 
-local statusLabel = Instance.new("TextLabel", main)
-statusLabel.Size = UDim2.new(1, -24, 0, 30)
-statusLabel.Position = UDim2.new(0, 12, 1, -35)
-statusLabel.BackgroundTransparency = 1
-statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-statusLabel.Text = "Aguardando..."
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextSize = 12
-statusLabel.TextXAlignment = Enum.TextXAlignment.Left
-
 tabFarmBtn.MouseButton1Click:Connect(function()
-    tabFarmContainer.Visible = true
-    tabProContainer.Visible = false
-    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-    tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    tabFarmContainer.Visible = true; tabProContainer.Visible = false
+    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 100)
+    tabProBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 end)
 
 tabProBtn.MouseButton1Click:Connect(function()
-    tabFarmContainer.Visible = false
-    tabProContainer.Visible = true
-    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    tabProBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    tabFarmContainer.Visible = false; tabProContainer.Visible = true
+    tabFarmBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+    tabProBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 100)
 end)
 
--- ==================== TOGGLES COM NOMES ORIGINAIS ====================
+-- ==================== TOGGLE FACTORY ====================
 local Remote = ReplicatedStorage:FindFirstChild("RequestRankedReward", true)
 
-local function createToggle(titleText, yPos, code, parent)
+local function createToggle(name, yPos, code, parent)
     local frame = Instance.new("Frame", parent)
-    frame.Size = UDim2.new(1, 0, 0, 42)
+    frame.Size = UDim2.new(1, 0, 0, 50)
     frame.Position = UDim2.new(0, 0, 0, yPos)
-    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+    frame.BackgroundColor3 = Color3.fromRGB(22, 22, 50)
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
 
     local tl = Instance.new("TextLabel", frame)
-    tl.Size = UDim2.new(0.75, 0, 1, 0)
-    tl.Position = UDim2.new(0, 10, 0, 0)
+    tl.Size = UDim2.new(0.65, 0, 1, 0)
+    tl.Position = UDim2.new(0, 12, 0, 0)
     tl.BackgroundTransparency = 1
-    tl.Text = titleText
-    tl.TextColor3 = Color3.new(1,1,1)
+    tl.Text = name
+    tl.TextColor3 = Color3.fromRGB(255, 255, 255)
     tl.Font = Enum.Font.GothamBold
-    tl.TextSize = 13
+    tl.TextSize = 12
     tl.TextXAlignment = Enum.TextXAlignment.Left
 
     local btn = Instance.new("TextButton", frame)
-    btn.Size = UDim2.new(0, 55, 0, 24)
-    btn.Position = UDim2.new(1, -62, 0.5, -12)
-    btn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+    btn.Size = UDim2.new(0, 65, 0, 30)
+    btn.Position = UDim2.new(1, -75, 0.5, -15)
+    btn.BackgroundColor3 = Color3.fromRGB(120, 30, 30)
     btn.Text = "OFF"
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    btn.TextSize = 14
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
     local active = false
     btn.MouseButton1Click:Connect(function()
         active = not active
         btn.Text = active and "ON" or "OFF"
-        btn.BackgroundColor3 = active and Color3.fromRGB(50, 160, 70) or Color3.fromRGB(180, 50, 50)
+        btn.BackgroundColor3 = active and Color3.fromRGB(60, 180, 80) or Color3.fromRGB(120, 30, 30)
         
         if active then
             task.spawn(function()
-                while active and not _G.StopAllICEHUBLoops do
-                    if Remote then 
-                        pcall(function() Remote:InvokeServer(code) end)
-                    end
+                while active and not _G.StopAllGALAXYHUBLoops do
+                    if Remote then pcall(function() Remote:InvokeServer(code) end) end
                     task.wait(0.8)
                 end
             end)
@@ -190,76 +180,50 @@ local function createToggle(titleText, yPos, code, parent)
     end)
 end
 
-createToggle("Style Spins(Bronze 2)", 0, 1, tabFarmContainer)
-createToggle("Farm Yen(Bronze 3)", 48, 2, tabFarmContainer)
-createToggle("Habilits Spins(Prata 2)", 96, 4, tabFarmContainer)
+createToggle("Style Spins (Bronze 2)", 0, 1, tabFarmContainer)
+createToggle("Farm Yen (Bronze 3)", 55, 2, tabFarmContainer)
+createToggle("Habilits Spins (Prata 2)", 110, 4, tabFarmContainer)
 
-createToggle("Style Spins Pro(Ouro 2)", 0, 7, tabProContainer)
-createToggle("Yen Farm Pro(Diamante 2)", 48, 10, tabProContainer)
-createToggle("Habilits Spins(Diamante 3)", 96, 8, tabProContainer)
+createToggle("Style Spins Pro (Ouro 2)", 0, 7, tabProContainer)
+createToggle("Yen Farm Pro (Diamante 2)", 55, 10, tabProContainer)
+createToggle("Habilits Spins (Diamante 3)", 110, 8, tabProContainer)
 
--- ==================== BANNER E BOLHA ====================
-local bannerGui = Instance.new("ScreenGui", playerGui)
-bannerGui.Name = "ICEBanner"
-bannerGui.Enabled = false
-
-local bannerLabel = Instance.new("TextLabel", bannerGui)
-bannerLabel.Size = UDim2.new(0.8, 0, 0, 30)
-bannerLabel.Position = UDim2.new(0.1, 0, 0, 0)
-bannerLabel.BackgroundTransparency = 1
-bannerLabel.Text = "Script Criado Por Lorenzo | tiktok lrxvbl"
-bannerLabel.Font = Enum.Font.GothamBold
-bannerLabel.TextSize = 15
-
+-- ==================== BOLHA DE CONTROLE (SUPER GALAXY) ====================
 local bubbleGui = Instance.new("ScreenGui", playerGui)
-bubbleGui.Name = "ICEBubble"
+bubbleGui.Name = "GalaxyBubble"
+
 local bubble = Instance.new("TextButton", bubbleGui)
-bubble.Size = UDim2.new(0, 60, 0, 60)
-bubble.Position = UDim2.new(0.5, -30, 0, 15)
-bubble.BackgroundColor3 = Color3.fromRGB(15,15,15)
-bubble.Text = "ICE"
-bubble.TextColor3 = Color3.new(1,1,1)
-bubble.Font = Enum.Font.GothamBold
+bubble.Size = UDim2.new(0, 100, 0, 100) -- AUMENTADO PARA 100
+bubble.Position = UDim2.new(0.5, -50, 0, 15) -- Centralizado com o novo tamanho
+bubble.BackgroundTransparency = 1 
+bubble.Text = "🌌" 
+bubble.TextSize = 60 -- SÍMBOLO AUMENTADO
 bubble.Visible = false
 bubble.Draggable = true
-Instance.new("UICorner", bubble).CornerRadius = UDim.new(1,0)
+
 local bstroke = Instance.new("UIStroke", bubble)
-bstroke.Thickness = 2
+bstroke.Thickness = 2.5 -- Contorno um pouco mais visível para o tamanho novo
 
 closeBtn.MouseButton1Click:Connect(function() main.Visible = false; bubble.Visible = true end)
 bubble.MouseButton1Click:Connect(function() main.Visible = true; bubble.Visible = false end)
 
+-- ==================== EFEITOS E ANIMAÇÃO ====================
 task.spawn(function()
     local h = 0
-    while task.wait(0.03) and not _G.StopAllICEHUBLoops do
-        h = (h + 0.01) % 1
+    while task.wait(0.03) and not _G.StopAllGALAXYHUBLoops do
+        h = (h + 0.008) % 1
         local c = Color3.fromHSV(h, 0.7, 1)
         if mainStroke then mainStroke.Color = c end
         if bstroke then bstroke.Color = c end
-        if bannerLabel then bannerLabel.TextColor3 = c end
     end
 end)
 
--- ==================== EXECUÇÃO DA ANIMAÇÃO (Splash + Blur) ====================
 task.spawn(function()
-    -- Ativa o blur e mostra o splash "Made By lrxvbl"
-    TweenService:Create(blur, TweenInfo.new(0.6), {Size = 20}):Play()
-    
-    -- Aguarda 3 segundos com a tela embaçada
-    task.wait(3)
-    
-    -- Fade out: blur e splash somem juntos
-    TweenService:Create(blur, TweenInfo.new(0.5), {Size = 0}):Play()
-    local fadeOut = TweenService:Create(splashFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1})
-    fadeOut:Play()
-    fadeOut.Completed:Wait()
-    
-    -- Limpa o splash e o blur
-    splashGui:Destroy()
-    blur:Destroy()
-    
-    -- Ativa a GUI principal e o banner
-    screenGui.Enabled = true
-    bannerGui.Enabled = true
-    statusLabel.Text = "Pronto para iniciar"
+    TweenService:Create(blur, TweenInfo.new(0.8), {Size = 25}):Play()
+    task.wait(2.5)
+    local f = TweenService:Create(splashFrame, TweenInfo.new(0.6), {BackgroundTransparency = 1})
+    TweenService:Create(splashText, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+    TweenService:Create(blur, TweenInfo.new(0.8), {Size = 0}):Play()
+    f:Play(); f.Completed:Wait()
+    splashGui:Destroy(); blur:Destroy(); screenGui.Enabled = true
 end)
